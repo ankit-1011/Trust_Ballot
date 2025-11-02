@@ -70,7 +70,7 @@ const Login = () => {
             </div> :
                 <Card className="w-[490px] ">
                     <CardHeader className="flex justify-center items-center">
-                        <Label className="font-bold text-[20px]">Create Account</Label>
+                        <Label className="font-bold text-[20px]">Login Account</Label>
                     </CardHeader>
                     <CardContent className="flex flex-col gap-4">
                         <form onSubmit={handleSubmit} className="flex flex-col gap-4">

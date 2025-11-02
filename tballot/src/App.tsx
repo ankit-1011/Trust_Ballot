@@ -24,16 +24,16 @@ const App = () => {
         <QueryClientProvider client={queryClient}>
           <RainbowKitProvider chains={config.chains} theme={darkTheme()}>
             <Cursor />
-            <Routes>
+            <Routes >
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<SignUp />} />
-              <Route path="/menu" element={<Menu />} />
-              <Route element={<Menu />}>
-                <Route path="/register" element={<Register />} />
-                <Route path={"/dashboard"} element={<Dashboard />} />
-                <Route path={"/candidate-list"} element={<Candidate />} />
-                <Route path={"/voter-list"} element={<Voter />} />
+             
+              <Route path="/menu" element={<Menu />}>
+                <Route path="register" element={<Register />} />
+                <Route path={"dashboard"} element={<Dashboard />} />
+                <Route path={"candidate-list"} element={<Candidate />} />
+                <Route path={"voter-list"} element={<Voter />} />
               </Route>
             </Routes>
             <Toaster position="top-right" richColors closeButton />
