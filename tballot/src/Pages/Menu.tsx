@@ -20,16 +20,16 @@ export default function Menu() {
                     Menu
                 </div>
                 <nav className="flex-1  space-y-3 ">
-                    <Button variant="ghost" className="w-full justify-start gap-3 " onClick={() => Navigate("/dashboard")}>
+                    <Button variant="ghost" className="w-full justify-start gap-3 " onClick={() => Navigate("/menu/dashboard")}>
                         <Home size={32} /> Dashboard
                     </Button>
-                    <Button variant="ghost" className="w-full justify-start gap-3" onClick={() => Navigate("/candidate-list")}>
+                    <Button variant="ghost" className="w-full justify-start gap-3" onClick={() => Navigate("/menu/candidate-list")}>
                         <User size={42} /> Candidate List
                     </Button>
-                    <Button variant="ghost" className="w-full justify-start gap-3" onClick={() => Navigate("/voter-list")}>
+                    <Button variant="ghost" className="w-full justify-start gap-3" onClick={() => Navigate("/menu/voter-list")}>
                         <List size={18} /> Voter List
                     </Button>
-                    <Button variant="ghost" className="w-full justify-start gap-3" onClick={() => Navigate("/register")}>
+                    <Button variant="ghost" className="w-full justify-start gap-3" onClick={() => Navigate("/menu/register")}>
                         <Boxes />Register
                     </Button>
                 </nav>
