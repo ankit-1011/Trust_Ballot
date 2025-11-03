@@ -117,13 +117,13 @@ contract TrustBallot {
         return (c.id, c.name, c.meta, c.voteCount);
     }
 
-    // function getAllCandidates() public view returns (Candidate[] memory) {
-    //     Candidate[] memory list = new Candidate[](candidateIds.length);
-    //     for (uint256 i = 0; i < candidateIds.length; i++) {
-    //         list[i] = candidates[candidateIds[i]];
-    //     }
-    //     return list;
-    // }
+    function getAllCandidates() public view returns (Candidate[] memory) {
+        Candidate[] memory list = new Candidate[](candidateIds.length);
+        for (uint256 i = 0; i < candidateIds.length; i++) {
+            list[i] = candidates[candidateIds[i]];
+        }
+        return list;
+    }
 
     function getCandidatesCount() public view returns (uint256) {
         return candidateIds.length;
