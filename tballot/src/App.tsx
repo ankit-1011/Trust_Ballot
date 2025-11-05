@@ -14,6 +14,7 @@ import { WagmiProvider } from "wagmi";
 import { RainbowKitProvider ,darkTheme } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {config } from "../WalletConfig";
+import AdminElectionToggle from "./Pages/AdminElectionToggle"
 
 
 const queryClient = new QueryClient();
@@ -28,7 +29,7 @@ const App = () => {
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<SignUp />} />
-             
+              <Route path="/toggle" element={<AdminElectionToggle />} />
               <Route path="/menu" element={<Menu />}>
                 <Route path="register" element={<Register />} />
                 <Route path={"dashboard"} element={<Dashboard />} />

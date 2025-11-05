@@ -36,7 +36,7 @@ export const addCandidate = async (name: string, meta: string) => {
   const contract = await getContractSigner();
   const tx = await contract.addCandidate(name, meta);
   await tx.wait();
-  console.log("✅ Candidate added successfully");
+  console.log("Candidate added successfully");
 };
 
 // ✅ Register voter manually (Admin only)
@@ -48,7 +48,7 @@ export const registerVoter = async (
   const contract = await getContractSigner();
   const tx = await contract.registerVoter(voterAddress, name, image);
   await tx.wait();
-  console.log("✅ Voter registered successfully (Admin)");
+  console.log("Voter registered successfully (Admin)");
 };
 
 
@@ -57,7 +57,7 @@ export const startElection = async () => {
   const contract = await getContractSigner();
   const tx = await contract.startElection();
   await tx.wait();
-  console.log("✅ Election started!");
+  console.log(" Election started!");
 };
 
 // ✅ End election (Admin only)
@@ -87,6 +87,26 @@ export const voteCandidate = async (candidateId: number) => {
   await tx.wait();
   console.log("🗳️ Vote cast successfully!");
 };
+
+// ✅ Get all voters (for frontend)
+export const getAllVoters = async () => {
+  const contract = getContractProvider();
+  // The contract returns [Voter[], address[]]
+  const [voterDataArray, addresses]: [any[], string[]] = await contract.getAllVoters();
+
+  // Merge the data so each voter has its address
+  const voters = voterDataArray.map((v, i) => ({
+    name: v.name,
+    image: v.image,
+    isRegistered: v.isRegistered,
+    hasVoted: v.hasVoted,
+    votedId: v.votedId.toString(),
+    address: addresses[i],
+  }));
+
+  return voters;
+};
+
 
 // ------------------------------------------------------------
 // 🔹 View / Read Functions

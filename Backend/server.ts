@@ -7,6 +7,7 @@ import dotenv from 'dotenv';
 import SignUp from "./models/SignUp.ts";
 import sendLoginMail from './controllers/loginMail.ts';
 import signUpMail from './controllers/signUpmail.ts';
+import pinataUpload from "./routes/PintaUpload.ts";
 dotenv.config();
 
 
@@ -16,10 +17,7 @@ const JWT_SECRET =process.env.JWT_SECRET;
 
 
 
-app.use(cors({
-  origin: "http://localhost:5173",
-  credentials: true
-}));
+app.use(cors({origin: "http://localhost:5173",credentials: true}));
 
 app.use(express.json());
 
@@ -29,16 +27,19 @@ const mongoURI = "mongodb://127.0.0.1:27017/trustballot";
 
 mongoose.connect(mongoURI)
   .then(() => {
-    console.log("✅ MongoDB connected");
+    console.log("MongoDB connected");
   })
   .catch((err) => {
-    console.log("❌ MongoDB connection error:", err);
+    console.log("MongoDB connection error:", err);
   });
 
 app.get('/', (req, res) => {
   res.send("Express is running");
 });
 
+
+
+app.use("/api", pinataUpload);
 
 app.post('/signup', async (req,res)=>{
 try{
