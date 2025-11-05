@@ -12,12 +12,13 @@ const Dashboard = () => {
   const [candidates, setCandidates] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // ✅ Fetch candidates
+  //  Fetch candidates
   useEffect(() => {
     const fetchCandidates = async () => {
       try {
         const list = await getAllCandidates();
         setCandidates(list);
+        console.log("Candidates fetched:", list);
       } catch (err) {
         console.error(err);
       }
@@ -25,17 +26,17 @@ const Dashboard = () => {
     if (isConnected) fetchCandidates();
   }, [isConnected]);
 
-  // ✅ Vote for a candidate
+  //  Vote for a candidate
   const handleVote = async (id: string) => {
     try {
       setLoading(true);
       const contract = await getContractSigner();
       const tx = await contract.vote(id);
       await tx.wait();
-      toast(`🗳️ Successfully voted for candidate #${id}`);
+      toast(` Successfully voted for candidate #${id}`);
     } catch (err: any) {
       console.error(err);
-      toast(`❌ Error: ${err.reason || err.message}`);
+      toast(` Error: ${err.reason || err.message}`);
     } finally {
       setLoading(false);
     }

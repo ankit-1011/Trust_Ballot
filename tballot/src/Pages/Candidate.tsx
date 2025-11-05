@@ -5,34 +5,66 @@ import WalletConnect from "./WalletConnect";
 import { useAccount } from "wagmi";
 import { Button } from "@/components/ui/8bit/button";
 import { toast } from "@/components/ui/8bit/toast";
-import { getContractSigner } from "../Contracts/etherContracts"; 
+import { getContractSigner } from "../Contracts/etherContracts";
 
 const Candidate = () => {
   const { isConnected } = useAccount();
   const [name, setName] = useState("");
   const [meta, setMeta] = useState("");
+  const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Handle register when click
-  const handleRegister = async (e:React.FormEvent) => {
+  // ✅ Upload image to Pinata
+  const uploadToPinata = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await fetch("https://api.pinata.cloud/pinning/pinFileToIPFS", {
+        method: "POST",
+        headers: {
+          pinata_api_key: process.env.PINATA_API_KEY!,
+          pinata_secret_api_key: process.env.PINATA_SECRET_API_KEY!,
+        },
+        body: formData,
+      });
+
+      const data = await res.json();
+      return `https://gateway.pinata.cloud/ipfs/${data.IpfsHash}`;
+    } catch (error) {
+      console.error("Pinata upload failed:", error);
+      throw new Error("Image upload failed");
+    }
+  };
+
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
       toast("Please enter candidate name");
       return;
     }
+    if (!file) {
+      toast("Please upload candidate image");
+      return;
+    }
 
     try {
       setLoading(true);
+      // 1️⃣ Upload image to Pinata
+      const imageUrl = await uploadToPinata(file);
+
+      // 2️⃣ Call smart contract
       const contract = await getContractSigner();
-      const tx = await contract.addCandidate(name, meta);
+      const tx = await contract.addCandidate(name, imageUrl);
       await tx.wait();
 
       toast("🎉 Candidate added successfully!");
+      console.log("Candidate Registered:", { name, imageUrl });
       setName("");
-      setMeta("");
+      setFile(null);
     } catch (err: any) {
       console.error(err);
-      toast(`❌ Error: ${err.reason || err.message}`);
+      toast(`Error: ${err.reason || err.message}`);
     } finally {
       setLoading(false);
     }
@@ -50,35 +82,23 @@ const Candidate = () => {
         <CardContent>
           <form onSubmit={handleRegister} className="space-y-6">
             <div className="flex flex-row items-center gap-4">
-              <label className="text-sm font-bold text-gray-700 w-34">
-                Full Name:
-              </label>
+              <label className="text-sm font-bold text-gray-700 w-34">Full Name:</label>
               <input
                 type="text"
                 className="flex-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter your Name"
+                placeholder="Enter candidate name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
             </div>
 
             <div className="flex flex-row items-center gap-4">
-              <label className="text-sm font-bold text-gray-700 w-34">
-                Wallet Address:
-              </label>
-              <input
-                type="text"
-                className="flex-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter Wallet Address"
-                value={meta}
-                onChange={(e) => setMeta(e.target.value)}
-              />
-            </div>
-
-            <div className="flex flex-row items-center gap-4">
+              <label className="text-sm font-bold text-gray-700 w-34">Image:</label>
               <input
                 type="file"
+                accept="image/*"
                 className="flex-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={(e) => setFile(e.target.files?.[0] || null)}
               />
             </div>
 

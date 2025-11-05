@@ -1,33 +1,86 @@
-import WalletConnect from './WalletConnect'
-import { useAccount } from 'wagmi'
-import { Copy } from 'lucide-react'
-import { ComboBoxExample } from './ComboBoxExample'
+import React, { useEffect, useState } from "react";
+import { getVoter } from "../Contracts/etherContracts";
+import { useAccount } from "wagmi";
+import { Copy } from "lucide-react";
+import { toast } from "@/components/ui/8bit/toast";
+import WalletConnect from "./WalletConnect";
 
-const Voter = () => {
-  const { isConnected } = useAccount()
+const VoterList = () => {
+  const { isConnected } = useAccount();
+  const [voters, setVoters] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  // 🔹 Example: voter addresses (in real use, you can store in backend or smart contract array)
+  const voterAddresses = [
+    "0x1234abcd5678ef901234abcd5678ef901234abcd",
+    "0xabcd1234abcd5678ef901234abcd5678ef901234",
+  ];
+
+  const handleCopy = (addr: string) => {
+    navigator.clipboard.writeText(addr);
+    toast("Address copied!");
+  };
+
+  useEffect(() => {
+    const fetchVoters = async () => {
+      if (!isConnected) return;
+      setLoading(true);
+      try {
+        const voterData = [];
+        for (const addr of voterAddresses) {
+          const voter = await getVoter(addr);
+          if (voter && voter.name) {
+            voterData.push({ ...voter, address: addr });
+          }
+        }
+        setVoters(voterData);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchVoters();
+  }, [isConnected]);
+
+  if (!isConnected) return <WalletConnect />;
 
   return (
-    <div>
-      {!isConnected ? (<WalletConnect />) : (
-        <>
-        <div className="m-10">
-          <ComboBoxExample />
-        </div>
-        <div className="">
-          <div className="w-64 h-28 rounded-lg border-2 border-black p-3 m-20 border-r-8 border-b-8 hover:-translate-y-1 duration-200 ">
-            <div className="border-2 border-black w-55 h-10 p-2 rounded-sm press-start-2p-regular">
-              name
+    <div className="flex flex-wrap justify-center gap-8 p-10 bg-gray-100 min-h-screen">
+      {loading ? (
+        <div className="text-lg font-semibold">Loading voters...</div>
+      ) : voters.length === 0 ? (
+        <div className="text-lg font-semibold">No registered voters yet!</div>
+      ) : (
+        voters.map((voter, index) => (
+          <div
+            key={index}
+            className="w-64 h-auto rounded-lg border-2 border-black p-3 border-r-8 border-b-8 hover:-translate-y-1 duration-200 bg-white text-center shadow-md"
+          >
+            <img
+              src={voter.image}
+              alt={voter.name}
+              className="w-24 h-24 rounded-full mx-auto mb-3 border-2 border-black object-cover"
+            />
+            <div className="border-2 border-black p-2 rounded-sm press-start-2p-regular mb-3">
+              {voter.name}
             </div>
-            <div className="flex m-2.5 gap-2">
-              <div className="border-2 w-29 h-8 p-1 flex border-black rounded-sm  press-start-2p-regular border-r-5 border-b-5 cursor-pointer active:bg-blue-400 transition-colors duration-200 "><Copy />copy</div>
-              <div className="border-2 w-30 h-8 p-1 border-black rounded-sm   press-start-2p-regular border-r-5 border-b-5 cursor-pointer active:bg-green-500 transition-colors duration-200">verify</div>
+            <div className="flex justify-center gap-2">
+              <div
+                onClick={() => handleCopy(voter.address)}
+                className="border-2 px-2 py-1 flex items-center gap-1 border-black rounded-sm press-start-2p-regular border-r-5 border-b-5 cursor-pointer active:bg-blue-400 transition-colors duration-200"
+              >
+                <Copy size={14} /> copy
+              </div>
+              <div className="border-2 px-2 py-1 border-black rounded-sm press-start-2p-regular border-r-5 border-b-5 cursor-pointer active:bg-green-500 transition-colors duration-200">
+                verify
+              </div>
             </div>
           </div>
-        </div>
-        </>
+        ))
       )}
     </div>
-  )
-}
+  );
+};
 
-export default Voter
+export default VoterList;
