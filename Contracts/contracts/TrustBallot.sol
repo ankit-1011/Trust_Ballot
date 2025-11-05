@@ -22,31 +22,34 @@ contract TrustBallot {
     struct Candidate {
         uint256 id;
         string name;
-        string meta; // optional (party, ipfs hash, etc.)
+        string meta; // optional (party info or IPFS)
         uint256 voteCount;
         bool exists;
     }
-    // candidates stored in mapping + array for enumeration
+
     mapping(uint256 => Candidate) private candidates;
     uint256[] private candidateIds;
     uint256 private nextCandidateId = 1;
 
     // ---------- Voter ----------
     struct Voter {
+        string name;
+        string image; // IPFS image URL
         bool isRegistered;
         bool hasVoted;
         uint256 votedCandidateId; // 0 if not voted
     }
+
     mapping(address => Voter) public voters;
 
     // ---------- Events ----------
     event CandidateAdded(uint256 indexed candidateId, string name);
-    event VoterRegistered(address indexed voter);
+    event VoterRegistered(address indexed voter, string name, string image);
     event ElectionStarted();
     event ElectionEnded();
     event Voted(address indexed voter, uint256 indexed candidateId);
 
-    // ---------- Admin functions ----------
+    // ---------- Admin Functions ----------
     function addCandidate(string calldata _name, string calldata _meta) external onlyOwner {
         uint256 id = nextCandidateId++;
         candidates[id] = Candidate({
@@ -60,25 +63,23 @@ contract TrustBallot {
         emit CandidateAdded(id, _name);
     }
 
-    // register single voter
-    function registerVoter(address _voter) external onlyOwner {
-        require(_voter != address(0), "zero address");
-        require(!voters[_voter].isRegistered, "already registered");
-        voters[_voter] = Voter({ isRegistered: true, hasVoted: false, votedCandidateId: 0 });
-        emit VoterRegistered(_voter);
+    // ---------- Voter Registration ----------
+    // Admin can register manually (if needed)
+    function registerVoter(address _voter, string calldata _name, string calldata _image) external onlyOwner {
+        require(_voter != address(0), "Invalid address");
+        require(!voters[_voter].isRegistered, "Already registered");
+        voters[_voter] = Voter(_name, _image, true, false, 0);
+        emit VoterRegistered(_voter, _name, _image);
     }
 
-    // // batch register voters
-    // function registerVotersBatch(address[] calldata _voters) external onlyOwner {
-    //     for (uint256 i = 0; i < _voters.length; i++) {
-    //         address v = _voters[i];
-    //         if (v != address(0) && !voters[v].isRegistered) {
-    //             voters[v] = Voter({ isRegistered: true, hasVoted: false, votedCandidateId: 0 });
-    //             emit VoterRegistered(v);
-    //         }
-    //     }
-    // }
+    // ✅ Self-registration (user registers by connecting wallet)
+    function selfRegister(string calldata _name, string calldata _image) external {
+        require(!voters[msg.sender].isRegistered, "Already registered");
+        voters[msg.sender] = Voter(_name, _image, true, false, 0);
+        emit VoterRegistered(msg.sender, _name, _image);
+    }
 
+    // ---------- Election Controls ----------
     function startElection() external onlyOwner {
         require(state == ElectionState.CREATED, "Already started or ended");
         require(candidateIds.length >= 1, "No candidates");
@@ -93,7 +94,7 @@ contract TrustBallot {
     }
 
     // ---------- Voting ----------
-    function vote(uint256 _candidateId ) external {
+    function vote(uint256 _candidateId) external {
         require(state == ElectionState.ONGOING, "Voting not allowed");
         Voter storage sender = voters[msg.sender];
         require(sender.isRegistered, "Not a registered voter");
@@ -102,7 +103,6 @@ contract TrustBallot {
         Candidate storage cand = candidates[_candidateId];
         require(cand.exists, "Candidate not exists");
 
-        // effect before interaction pattern (no external calls here though)
         cand.voteCount += 1;
         sender.hasVoted = true;
         sender.votedCandidateId = _candidateId;
@@ -110,8 +110,12 @@ contract TrustBallot {
         emit Voted(msg.sender, _candidateId);
     }
 
-    // ---------- Views / Helpers ----------
-    function getCandidate(uint256 _id) public view returns (uint256 id, string memory name, string memory meta, uint256 voteCount) {
+    // ---------- View Functions ----------
+    function getCandidate(uint256 _id)
+        public
+        view
+        returns (uint256 id, string memory name, string memory meta, uint256 voteCount)
+    {
         Candidate storage c = candidates[_id];
         require(c.exists, "Candidate not exists");
         return (c.id, c.name, c.meta, c.voteCount);
@@ -129,7 +133,11 @@ contract TrustBallot {
         return candidateIds.length;
     }
 
-    function getWinner() public view returns (uint256 winnerId, string memory winnerName, uint256 winnerVotes) {
+    function getWinner()
+        public
+        view
+        returns (uint256 winnerId, string memory winnerName, uint256 winnerVotes)
+    {
         require(state == ElectionState.ENDED, "Election not ended");
         uint256 topId = 0;
         uint256 topVotes = 0;
@@ -141,7 +149,7 @@ contract TrustBallot {
             }
         }
         if (topId == 0) {
-            return (0, "", 0); // no votes cast
+            return (0, "", 0);
         }
         return (topId, candidates[topId].name, candidates[topId].voteCount);
     }
@@ -154,7 +162,16 @@ contract TrustBallot {
         return voters[_addr].hasVoted;
     }
 
-    // ---------- Utility: transfer ownership ----------
+    function getVoter(address _addr)
+        public
+        view
+        returns (string memory name, string memory image, bool isRegistered, bool hasVoted, uint256 votedId)
+    {
+        Voter memory v = voters[_addr];
+        return (v.name, v.image, v.isRegistered, v.hasVoted, v.votedCandidateId);
+    }
+
+    // ---------- Utility ----------
     function transferOwnership(address _newOwner) external onlyOwner {
         require(_newOwner != address(0), "zero address");
         owner = _newOwner;
