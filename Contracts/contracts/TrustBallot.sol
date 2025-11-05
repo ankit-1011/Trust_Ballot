@@ -30,6 +30,7 @@ contract TrustBallot {
     mapping(uint256 => Candidate) private candidates;
     uint256[] private candidateIds;
     uint256 private nextCandidateId = 1;
+    
 
     // ---------- Voter ----------
     struct Voter {
@@ -41,6 +42,7 @@ contract TrustBallot {
     }
 
     mapping(address => Voter) public voters;
+    address[] private voterAddresses;
 
     // ---------- Events ----------
     event CandidateAdded(uint256 indexed candidateId, string name);
@@ -63,21 +65,31 @@ contract TrustBallot {
         emit CandidateAdded(id, _name);
     }
 
-    // ---------- Voter Registration ----------
-    // Admin can register manually (if needed)
-    function registerVoter(address _voter, string calldata _name, string calldata _image) external onlyOwner {
-        require(_voter != address(0), "Invalid address");
-        require(!voters[_voter].isRegistered, "Already registered");
-        voters[_voter] = Voter(_name, _image, true, false, 0);
-        emit VoterRegistered(_voter, _name, _image);
-    }
+// Also update registerVoter (admin registration)
+function registerVoter(address _voter, string calldata _name, string calldata _image) external onlyOwner {
+    require(_voter != address(0), "Invalid address");
+    require(!voters[_voter].isRegistered, "Already registered");
+    voters[_voter] = Voter(_name, _image, true, false, 0);
+    voterAddresses.push(_voter); // ✅ track admin-registered voters
+    emit VoterRegistered(_voter, _name, _image);
+}
 
-    // ✅ Self-registration (user registers by connecting wallet)
-    function selfRegister(string calldata _name, string calldata _image) external {
-        require(!voters[msg.sender].isRegistered, "Already registered");
-        voters[msg.sender] = Voter(_name, _image, true, false, 0);
-        emit VoterRegistered(msg.sender, _name, _image);
+// Update selfRegister to push the address
+function selfRegister(string calldata _name, string calldata _image) external {
+    require(!voters[msg.sender].isRegistered, "Already registered");
+    voters[msg.sender] = Voter(_name, _image, true, false, 0);
+    voterAddresses.push(msg.sender); // ✅ track the voter address
+    emit VoterRegistered(msg.sender, _name, _image);
+}
+
+// ---------- New function ----------
+function getAllVoters() public view returns (Voter[] memory, address[] memory) {
+    Voter[] memory list = new Voter[](voterAddresses.length);
+    for (uint256 i = 0; i < voterAddresses.length; i++) {
+        list[i] = voters[voterAddresses[i]];
     }
+    return (list, voterAddresses);
+}
 
     // ---------- Election Controls ----------
     function startElection() external onlyOwner {

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { getVoter } from "../Contracts/etherContracts";
+import  { useEffect, useState } from "react";
+import { getAllVoters, getContractProvider, getVoter } from "../Contracts/etherContracts";
 import { useAccount } from "wagmi";
 import { Copy } from "lucide-react";
 import { toast } from "@/components/ui/8bit/toast";
@@ -10,38 +10,37 @@ const VoterList = () => {
   const [voters, setVoters] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // 🔹 Example: voter addresses (in real use, you can store in backend or smart contract array)
-  const voterAddresses = [
-    "0x1234abcd5678ef901234abcd5678ef901234abcd",
-    "0xabcd1234abcd5678ef901234abcd5678ef901234",
-  ];
+ 
 
   const handleCopy = (addr: string) => {
     navigator.clipboard.writeText(addr);
     toast("Address copied!");
   };
 
-  useEffect(() => {
-    const fetchVoters = async () => {
-      if (!isConnected) return;
-      setLoading(true);
-      try {
-        const voterData = [];
-        for (const addr of voterAddresses) {
-          const voter = await getVoter(addr);
-          if (voter && voter.name) {
-            voterData.push({ ...voter, address: addr });
-          }
-        }
-        setVoters(voterData);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchVoters();
-  }, [isConnected]);
+ useEffect(() => {
+  const fetchVoters = async () => {
+    if (!isConnected) return;
+    setLoading(true);
+    try {
+      const allVoters = await getAllVoters();
+      setVoters(allVoters);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchVoters();
+}, [isConnected]);
+
+
+
+
+
+
+
+
+
 
   if (!isConnected) return <WalletConnect />;
 

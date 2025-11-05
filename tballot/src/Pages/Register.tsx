@@ -12,7 +12,7 @@ import WalletConnect from "./WalletConnect";
 import { useAccount } from "wagmi";
 import { selfRegister, getVoter } from "../Contracts/etherContracts";
 import axios from "axios";
-import { Copy } from "lucide-react";
+
 
 const PINATA_API_KEY = import.meta.env.VITE_PINATA_API_KEY;
 const PINATA_SECRET_API_KEY = import.meta.env.VITE_PINATA_SECRET_API_KEY;
@@ -46,19 +46,15 @@ const Register = () => {
     const formData = new FormData();
     formData.append("file", file);
 
-    const res = await axios.post("https://api.pinata.cloud/pinning/pinFileToIPFS", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        pinata_api_key: PINATA_API_KEY,
-        pinata_secret_api_key: PINATA_SECRET_API_KEY,
-      },
-    });
+   const res = await axios.post("http://localhost:3000/api/upload", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
 
     const ipfsHash = res.data.IpfsHash;
     return `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
   };
 
-  // 🔹 Handle Register
+  //  Handle Register
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !image) {
@@ -74,9 +70,9 @@ const Register = () => {
       toast("Registering on blockchain...");
       await selfRegister(name, imageUrl);
 
-      toast("✅ Registered successfully!");
+      toast("Registered successfully!");
 
-      // ✅ Fetch voter details again after register
+      // Fetch voter details again after register
       const voter = await getVoter(address!);
       setVoterData(voter);
 
@@ -84,24 +80,18 @@ const Register = () => {
       setImage(null);
     } catch (error: any) {
       console.error(error);
-      toast("❌ Registration failed!");
+      toast(" Registration failed!");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(address || "");
-    toast("Wallet address copied!");
-  };
 
+
+  if(!isConnected)  <WalletConnect/>
   return (
     <div className="flex items-center justify-center bg-gray-100 mt-20">
-      {!isConnected ? (
-        <WalletConnect />
-      ) : (
-        <>
-          {!voterData ? (
+      
             <Card className="w-[550px] shadow-lg-blue transition-all duration-300">
               <CardHeader className="text-center">
                 <CardTitle>🗳️ Voter Registration</CardTitle>
@@ -150,32 +140,6 @@ const Register = () => {
                 </form>
               </CardContent>
             </Card>
-          ) : (
-            // ✅ Show voter card after registration
-            <div className="w-64 h-auto rounded-lg border-2 border-black p-3 m-10 border-r-8 border-b-8 hover:-translate-y-1 duration-200 bg-white text-center">
-              <img
-                src={voterData.image}
-                alt="voter"
-                className="w-24 h-24 rounded-full mx-auto mb-3 border-2 border-black object-cover"
-              />
-              <div className="border-2 border-black p-2 rounded-sm press-start-2p-regular mb-3">
-                {voterData.name}
-              </div>
-              <div className="flex justify-center gap-2">
-                <div
-                  onClick={handleCopy}
-                  className="border-2 px-2 py-1 flex items-center gap-1 border-black rounded-sm press-start-2p-regular border-r-5 border-b-5 cursor-pointer active:bg-blue-400 transition-colors duration-200"
-                >
-                  <Copy size={14} /> copy
-                </div>
-                <div className="border-2 px-2 py-1 border-black rounded-sm press-start-2p-regular border-r-5 border-b-5 cursor-pointer active:bg-green-500 transition-colors duration-200">
-                  verify
-                </div>
-              </div>
-            </div>
-          )}
-        </>
-      )}
     </div>
   );
 };
