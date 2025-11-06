@@ -4,10 +4,10 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import SignUp from "./models/SignUp";
-import sendLoginMail from './controllers/loginMail';
-import signUpMail from './controllers/signUpMail';
-import pinataUpload from "./routes/PintaUpload";
+import SignUp from "./models/SignUp.js";
+import sendLoginMail from './controllers/loginMail.js';
+import signUpMail from './controllers/signUpMail.js';
+import pinataUpload from "./routes/PintaUpload.js";
 dotenv.config();
 
 
