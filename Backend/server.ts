@@ -12,12 +12,19 @@ dotenv.config();
 
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const JWT_SECRET =process.env.JWT_SECRET;
 
 
 
-app.use(cors({origin: "http://localhost:5173",credentials: true}));
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "https://trust-ballot-hlez.vercel.app"
+  ],
+  credentials: true
+}));
+
 
 app.use(express.json());
 
