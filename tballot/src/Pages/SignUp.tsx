@@ -6,13 +6,14 @@ import { useState, type ChangeEvent, type FormEvent } from "react"
 import { toast } from "@/components/ui/8bit/toast"
 import { useNavigate } from "react-router-dom"
 import { ScatterBoxLoader } from "react-awesome-loaders";
-import bg from "../assets/background.jpg"; // <-- add this import
+import bg from "../assets/background.jpg";
+import { API_ENDPOINTS } from "../config/api";
 
 
 interface SignUpForm {
-    name: String,
-    email: String,
-    password: String
+    name: string,
+    email: string,
+    password: string
 }
 
 const SignUp = () => {
@@ -39,7 +40,7 @@ const SignUp = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            const res = await fetch('https://trust-ballot.onrender.com/signup', {
+            const res = await fetch(API_ENDPOINTS.SIGNUP, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData)
@@ -55,9 +56,12 @@ const SignUp = () => {
                     navigate("/menu");
                 }
                     , 1000)
+            } else {
+                // Handle error response
+                toast(data.message || "Error during sign up");
+                setLoading(false);
             }
         } catch (err) {
-
             console.error(err);
             setFormData({ name: "", email: "", password: "" })
             toast("Error during sign up");

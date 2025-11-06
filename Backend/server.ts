@@ -4,10 +4,10 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import SignUp from "./models/SignUp.js";
-import sendLoginMail from './controllers/loginMail.js';
-import signUpMail from './controllers/signUpMail.js';
-import pinataUpload from "./routes/PintaUpload.js";
+import SignUp from "./models/SignUp.ts";
+import sendLoginMail from './controllers/loginMail.ts';
+import signUpMail from './controllers/signUpMail.ts';
+import pinataUpload from "./routes/PintaUpload.ts";
 dotenv.config();
 
 
@@ -20,6 +20,7 @@ const JWT_SECRET =process.env.JWT_SECRET;
 app.use(cors({
   origin: [
     "http://localhost:5173",
+    "http://localhost:5174",
     "https://trust-ballot-hlez.vercel.app"
   ],
   credentials: true
@@ -27,6 +28,8 @@ app.use(cors({
 
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 
 const mongoURI = process.env.MONGO_URI;
 

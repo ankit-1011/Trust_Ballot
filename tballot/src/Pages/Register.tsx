@@ -12,6 +12,7 @@ import WalletConnect from "./WalletConnect";
 import { useAccount } from "wagmi";
 import { selfRegister, getVoter } from "../Contracts/etherContracts";
 import axios from "axios";
+import { API_ENDPOINTS } from "../config/api";
 
 
 
@@ -45,7 +46,7 @@ const Register = () => {
     const formData = new FormData();
     formData.append("file", file);
 
-   const res = await axios.post("https://trust-ballot.onrender.com/api/upload", formData, {
+   const res = await axios.post(API_ENDPOINTS.UPLOAD, formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
 

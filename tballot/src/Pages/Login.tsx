@@ -7,6 +7,7 @@ import { useState, type ChangeEvent, type FormEvent } from "react"
 import { toast } from "@/components/ui/8bit/toast"
 import { ScatterBoxLoader } from "react-awesome-loaders"
 import bg from "../assets/background.jpg";
+import { API_ENDPOINTS } from "../config/api";
 
 interface LoginForm {
     email: string,
@@ -32,7 +33,7 @@ const Login = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            const res = await fetch('https://trust-ballot.onrender.com/login', {
+            const res = await fetch(API_ENDPOINTS.LOGIN, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData)
