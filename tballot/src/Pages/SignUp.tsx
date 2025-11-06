@@ -54,7 +54,7 @@ const SignUp = () => {
                     setLoading(false);
                     navigate("/menu");
                 }
-                    , 10000)
+                    , 1000)
             }
         } catch (err) {
 
