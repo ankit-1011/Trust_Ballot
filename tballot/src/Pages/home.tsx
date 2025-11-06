@@ -23,8 +23,11 @@ const Home = () => {
 
     return (
         <div className="min-h-screen w-full bg-black relative">
-            <div className="relative z-10 w-15 h-3 ml-5 ">
-                <img src={etherium} className="ml-9" /><h2 className="press-start-2p-regular text-white text-[15px]" >&nbsp;Ethereum Blockchain</h2>
+            <div className="relative z-10 w-15 h-3 ml-2 sm:ml-5 mt-2 sm:mt-0">
+                <div className="flex items-center gap-1 sm:gap-2">
+                    <img src={etherium} className="w-6 h-6 sm:w-8 sm:h-8 ml-2 sm:ml-9" />
+                    <h2 className="press-start-2p-regular text-white text-xs sm:text-sm md:text-[15px]" >&nbsp;Ethereum Blockchain</h2>
+                </div>
             </div>
 
             {/* Background */}
@@ -39,26 +42,26 @@ const Home = () => {
             />
 
             {/* Content */}
-            <div className="relative z-10 flex flex-col items-center justify-center min-h-screen">
+            <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4">
                 <div className="flex flex-col items-center justify-center">
                     <motion.h1
                         initial={{ opacity: 0, y: -50 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.7 }}
-                        className="press-start-2p-regular text-7xl font-bold inline-flex items-center gap-2 text-white"
+                        className="press-start-2p-regular text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold inline-flex flex-col sm:flex-row items-center gap-2 text-white"
                     >
                         TrustBallot
                         <motion.img
                             src={logo}
                             alt="TrustBallot"
-                            className="w-30 h-30"
+                            className="w-16 h-16 sm:w-24 sm:h-24 md:w-30 md:h-30"
                             initial={{ scale: 0 }}
                             animate={{ scale: 1 }}
                             transition={{ duration: 0.6, delay: 0.3 }}
                         />
                     </motion.h1>
 
-                    <div className="press-start-2p-regular text-3xl font-bold text-white mt-6 text-center flex gap-2">
+                    <div className="press-start-2p-regular text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-white mt-4 sm:mt-6 text-center flex flex-wrap justify-center gap-2 px-2">
                         Decentralized{" "}
                         <AnimatePresence mode="wait">
                             <motion.span
@@ -80,9 +83,9 @@ const Home = () => {
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.6, delay: 1 }}
-                    className="mt-10"
+                    className="mt-6 sm:mt-10"
                 >
-                    <Button variant="outline" onClick={() => navigate("./login")} className="cursor-pointer">Let's Get Started</Button>
+                    <Button variant="outline" onClick={() => navigate("./login")} className="cursor-pointer text-sm sm:text-base">Let's Get Started</Button>
                 </motion.div>
             </div>
 
@@ -93,19 +96,18 @@ const Home = () => {
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 1.2 }}
-                className="flex flex-row gap-10 m-6 bottom-4 w-full z-10"
+                className="flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-4 sm:gap-6 md:gap-10 m-4 sm:m-6 bottom-4 w-full z-10 pb-4"
             >
-
                 <div>
                     <Button
                         variant="outline"
                         onClick={() =>
                             window.open("https://github.com/ankit-1011", "_blank", "noopener,noreferrer")
                         }
-                        className="flex items-center gap-2 cursor-pointer"
+                        className="flex items-center gap-2 cursor-pointer text-xs sm:text-sm"
                     >
                         Github
-                        <img src={github} alt="Github" className="w-6 h-6" />
+                        <img src={github} alt="Github" className="w-5 h-5 sm:w-6 sm:h-6" />
                     </Button>
                 </div>
 
@@ -115,14 +117,14 @@ const Home = () => {
                         onClick={() =>
                             window.open("https://x.com/AnRekt_1101", "_blank", "noopener,noreferrer")
                         }
-                        className="flex items-center gap-2 cursor-pointer"
+                        className="flex items-center gap-2 cursor-pointer text-xs sm:text-sm"
                     >
                         Twitter
-                        <img src={twitter} alt="Twitter" className="w-6 h-6" />
+                        <img src={twitter} alt="Twitter" className="w-5 h-5 sm:w-6 sm:h-6" />
                     </Button>
                 </div>
-                <div className="relative text-right left-[21%]">
-                    <h2 className="press-start-2p-regular text-white text-[15px]">2025@TrustBallot all right reserved</h2>
+                <div className="text-center sm:text-right sm:ml-auto">
+                    <h2 className="press-start-2p-regular text-white text-xs sm:text-sm md:text-[15px]">2025@TrustBallot all right reserved</h2>
                 </div>
             </motion.div>
         </div>

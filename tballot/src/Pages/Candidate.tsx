@@ -72,40 +72,40 @@ const Candidate = () => {
   if (!isConnected) return <WalletConnect />;
 
   return (
-    <div className="w-full flex justify-center items-center mt-20">
-      <Card className="w-[596px] shadow-lg-blue">
+    <div className="w-full flex justify-center items-center mt-4 sm:mt-10 md:mt-20 p-4">
+      <Card className="w-full max-w-[596px] shadow-lg-blue">
         <CardHeader className="text-center">
-          <CardTitle>Candidate Registration</CardTitle>
+          <CardTitle className="text-lg sm:text-xl md:text-2xl">Candidate Registration</CardTitle>
         </CardHeader>
 
         <CardContent>
-          <form onSubmit={handleRegister} className="space-y-6">
-            <div className="flex flex-row items-center gap-4">
-              <label className="text-sm font-bold text-gray-700 w-34">Full Name:</label>
+          <form onSubmit={handleRegister} className="space-y-4 sm:space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+              <label className="text-sm font-bold text-gray-700 sm:w-34">Full Name:</label>
               <input
                 type="text"
-                className="flex-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
                 placeholder="Enter candidate name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
             </div>
 
-            <div className="flex flex-row items-center gap-4">
-              <label className="text-sm font-bold text-gray-700 w-34">Image:</label>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+              <label className="text-sm font-bold text-gray-700 sm:w-34">Image:</label>
               <input
                 type="file"
                 accept="image/*"
-                className="flex-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
                 onChange={(e) => setFile(e.target.files?.[0] || null)}
               />
             </div>
 
-            <div className="flex justify-center">
+            <div className="flex justify-center pt-2">
               <Button
                 type="submit"
                 disabled={loading}
-                className={`p-6 bg-lime-600 text-white font-semibold rounded hover:bg-lime-700 transition duration-200 ${
+                className={`w-full sm:w-auto p-4 sm:p-6 bg-lime-600 text-white font-semibold rounded hover:bg-lime-700 transition duration-200 text-sm sm:text-base ${
                   loading ? "opacity-70 cursor-not-allowed" : ""
                 }`}
               >

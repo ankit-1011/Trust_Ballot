@@ -44,31 +44,31 @@ const Dashboard = () => {
   if (!isConnected) return <WalletConnect />;
 
   return (
-    <div className="flex flex-col items-center mt-10">
+    <div className="flex flex-col items-center mt-4 sm:mt-6 md:mt-10 p-2 sm:p-4">
 
       {/* Candidate Cards */}
-      <div className="flex flex-wrap gap-6 justify-center">
+      <div className="flex flex-wrap gap-3 sm:gap-4 md:gap-6 justify-center w-full">
         {candidates.length === 0 ? (
-          <p className="text-gray-600">No candidates registered yet.</p>
+          <p className="text-gray-600 text-sm sm:text-base">No candidates registered yet.</p>
         ) : (
           candidates.map((c) => (
             <div
               key={c.id}
-              className="w-60 h-52 border-3 border-black rounded-lg border-r-8 border-b-8 hover:-translate-y-1 duration-200"
+              className="w-full sm:w-56 md:w-60 h-auto sm:h-52 border-3 border-black rounded-lg border-r-4 sm:border-r-8 border-b-4 sm:border-b-8 hover:-translate-y-1 duration-200"
             >
-              <SquareArrowOutUpRight className='hover:translate-y-0.5 duration-100 cursor-pointer' />
+              <SquareArrowOutUpRight className='hover:translate-y-0.5 duration-100 cursor-pointer m-2' />
           
-              <div className="w-50 h-30 m-2  ml-4 border-2 border-black rounded-lg">
+              <div className="w-full sm:w-50 h-40 sm:h-30 m-2 sm:ml-4 border-2 border-black rounded-lg">
                 <img
                   src={c.meta || "https://8bitcn.com/images/pixelized-8bitcnorc.jpg"}
                   alt={c.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover rounded"
                 />
               </div>
               
               <div
                 onClick={() => handleVote(c.id)}
-                className={`w-27 h-8 ml-3 mt-2 text-center leading-8 border-3 border-black border-r-5 border-b-5 rounded-sm press-start-2p-regular text-sm cursor-pointer ${
+                className={`w-full sm:w-27 h-8 ml-2 sm:ml-3 mt-2 mb-2 sm:mb-0 text-center leading-8 border-3 border-black border-r-3 sm:border-r-5 border-b-3 sm:border-b-5 rounded-sm press-start-2p-regular text-xs sm:text-sm cursor-pointer ${
                   loading ? "bg-gray-400" : "active:bg-violet-400"
                 } transition-colors duration-200`}
               >

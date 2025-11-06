@@ -62,32 +62,32 @@ const Login = () => {
 
 
     return (
-        <div className="flex justify-center items-center h-screen " style={{backgroundImage:`url(${bg})`, backgroundSize: 'cover', backgroundPosition: 'center'}}>
+        <div className="flex justify-center items-center min-h-screen p-4" style={{backgroundImage:`url(${bg})`, backgroundSize: 'cover', backgroundPosition: 'center'}}>
             {Loading ? <div className="flex justify-center items-center h-40 ">
                 <ScatterBoxLoader
                     primaryColor={"#6366F1"}
                     secondaryColor={"#E0E7FF"}
                 />
             </div> :
-                <Card className="w-[490px] ">
+                <Card className="w-full max-w-[490px] mx-auto">
                     <CardHeader className="flex justify-center items-center">
-                        <Label className="font-bold text-[20px]">Login Account</Label>
+                        <Label className="font-bold text-lg sm:text-xl">Login Account</Label>
                     </CardHeader>
                     <CardContent className="flex flex-col gap-4">
                         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                            <div className="flex justify-center items-center gap-4">
-                                <Label className="w-3xs font-bold">Email</Label>
-                                <Input name="email" type="email" placeholder="enter ur email" required value={formData.email} onChange={handleChange}  className="w-[450px]" autoComplete="email"/>
+                            <div className="flex flex-col sm:flex-row sm:justify-center sm:items-center gap-2 sm:gap-4">
+                                <Label className="text-sm sm:text-base font-bold sm:w-3xs">Email</Label>
+                                <Input name="email" type="email" placeholder="enter ur email" required value={formData.email} onChange={handleChange}  className="w-full sm:w-[450px]" autoComplete="email"/>
                             </div>
 
-                            <div className="flex justify-center items-center gap-4">
-                                <Label className="w-3xs font-bold">Password</Label>
-                                <Input name="password" type="password" placeholder="enter ur password" required value={formData.password} onChange={handleChange} className="w-[450px]" autoComplete="current-password"/>
+                            <div className="flex flex-col sm:flex-row sm:justify-center sm:items-center gap-2 sm:gap-4">
+                                <Label className="text-sm sm:text-base font-bold sm:w-3xs">Password</Label>
+                                <Input name="password" type="password" placeholder="enter ur password" required value={formData.password} onChange={handleChange} className="w-full sm:w-[450px]" autoComplete="current-password"/>
                             </div>
 
-                            <div className="flex justify-center items-center gap-4">
-                                <Button type="submit">Login</Button>
-                                <Button onClick={() => navigate('/signup')}>Sign-Up</Button>
+                            <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 pt-2">
+                                <Button type="submit" className="w-full sm:w-auto">Login</Button>
+                                <Button onClick={() => navigate('/signup')} className="w-full sm:w-auto">Sign-Up</Button>
                             </div>
                         </form>
                     </CardContent>

@@ -90,49 +90,49 @@ const Register = () => {
 
   if(!isConnected)  <WalletConnect/>
   return (
-    <div className="flex items-center justify-center bg-gray-100 mt-20">
+    <div className="flex items-center justify-center bg-gray-100 mt-4 sm:mt-10 md:mt-20 p-4">
       
-            <Card className="w-[550px] shadow-lg-blue transition-all duration-300">
+            <Card className="w-full max-w-[550px] shadow-lg-blue transition-all duration-300">
               <CardHeader className="text-center">
-                <CardTitle>🗳️ Voter Registration</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-lg sm:text-xl md:text-2xl">🗳️ Voter Registration</CardTitle>
+                <CardDescription className="text-sm sm:text-base">
                   Register yourself securely on the blockchain
                 </CardDescription>
               </CardHeader>
 
               <CardContent>
-                <form onSubmit={handleRegister} className="space-y-6">
-                  <div className="flex flex-row items-center gap-4">
-                    <label className="text-sm font-bold text-gray-700 w-24">
+                <form onSubmit={handleRegister} className="space-y-4 sm:space-y-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                    <label className="text-sm font-bold text-gray-700 sm:w-24">
                       Full Name:
                     </label>
                     <input
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="flex-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="flex-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
                       placeholder="Enter your name"
                     />
                   </div>
 
-                  <div className="flex flex-row items-center gap-4">
-                    <label className="text-sm font-bold text-gray-700 w-24">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                    <label className="text-sm font-bold text-gray-700 sm:w-24">
                       Image:
                     </label>
                     <input
                       type="file"
                       accept="image/*"
                       onChange={(e) => setImage(e.target.files?.[0] || null)}
-                      className="flex-1"
+                      className="flex-1 text-sm sm:text-base"
                     />
                   </div>
 
-                  <div className="flex justify-center">
+                  <div className="flex justify-center pt-2">
                     <Button
                       type="submit"
                       variant="default"
                       disabled={loading}
-                      className="p-6 bg-lime-600 text-white font-semibold rounded hover:bg-lime-700 transition duration-200"
+                      className="w-full sm:w-auto p-4 sm:p-6 bg-lime-600 text-white font-semibold rounded hover:bg-lime-700 transition duration-200 text-sm sm:text-base"
                     >
                       {loading ? "Registering..." : "Register"}
                     </Button>

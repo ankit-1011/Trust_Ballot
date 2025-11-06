@@ -1,50 +1,70 @@
 import { Card } from "@/components/ui/8bit/card";
 import { Button } from "@/components/ui/8bit/button";
-import { Home, User, List, Boxes } from "lucide-react";
+import { Home, User, List, Boxes, Menu as MenuIcon, X } from "lucide-react";
 import { Separator } from "@/components/ui/8bit/separator";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/8bit/toast";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useState } from "react";
 
 
 export default function Menu() {
     let Navigate = useNavigate();
     let location = useLocation();
     let email = location.state?.email || localStorage.getItem("userEmail");
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     return (
-        <div className="flex min-h-screen bg-gray-100 ">
+        <div className="flex min-h-screen bg-gray-100">
+            {/* Mobile Menu Button */}
+            <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-md shadow-md"
+            >
+                {isMobileMenuOpen ? <X size={24} /> : <MenuIcon size={24} />}
+            </button>
+
             {/* Sidebar */}
-            <Card className="w-66 bg-white border-r border-gray-300 flex flex-col ">
-                <div className="flex justify-center text-2xl font-bold border-b border-gray-300 ">
+            <Card className={`fixed lg:static inset-y-0 left-0 z-40 w-64 sm:w-72 bg-white border-r border-gray-300 flex flex-col transform transition-transform duration-300 ease-in-out ${
+                isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+            }`}>
+                <div className="flex justify-center text-xl sm:text-2xl font-bold border-b border-gray-300 p-4">
                     Menu
                 </div>
-                <nav className="flex-1  space-y-3 ">
-                    <Button variant="ghost" className="w-full justify-start gap-3 " onClick={() => Navigate("/menu/dashboard")}>
-                        <Home size={32} /> Dashboard
+                <nav className="flex-1 space-y-2 sm:space-y-3 p-2 sm:p-4 overflow-y-auto">
+                    <Button variant="ghost" className="w-full justify-start gap-2 sm:gap-3 text-sm sm:text-base" onClick={() => { Navigate("/menu/dashboard"); setIsMobileMenuOpen(false); }}>
+                        <Home size={24} className="sm:w-8 sm:h-8" /> Dashboard
                     </Button>
-                    <Button variant="ghost" className="w-full justify-start gap-3" onClick={() => Navigate("/menu/candidate-list")}>
-                        <User size={42} /> Candidate List
+                    <Button variant="ghost" className="w-full justify-start gap-2 sm:gap-3 text-sm sm:text-base" onClick={() => { Navigate("/menu/candidate-list"); setIsMobileMenuOpen(false); }}>
+                        <User size={24} className="sm:w-10 sm:h-10" /> Candidate List
                     </Button>
-                    <Button variant="ghost" className="w-full justify-start gap-3" onClick={() => Navigate("/menu/voter-list")}>
+                    <Button variant="ghost" className="w-full justify-start gap-2 sm:gap-3 text-sm sm:text-base" onClick={() => { Navigate("/menu/voter-list"); setIsMobileMenuOpen(false); }}>
                         <List size={18} /> Voter List
                     </Button>
-                    <Button variant="ghost" className="w-full justify-start gap-3" onClick={() => Navigate("/menu/register")}>
-                        <Boxes />Register
+                    <Button variant="ghost" className="w-full justify-start gap-2 sm:gap-3 text-sm sm:text-base" onClick={() => { Navigate("/menu/register"); setIsMobileMenuOpen(false); }}>
+                        <Boxes size={20} />Register
                     </Button>
                 </nav>
-                <div className="p-6 border-t border-gray-300 ">
-                    <Button className="w-full p-7 cursor-pointer" variant="destructive" onClick={() => {localStorage.removeItem("userEmail"); toast("You Logout!"); Navigate("/") }}>
+                <div className="p-4 sm:p-6 border-t border-gray-300">
+                    <Button className="w-full p-4 sm:p-7 cursor-pointer text-sm sm:text-base" variant="destructive" onClick={() => {localStorage.removeItem("userEmail"); toast("You Logout!"); Navigate("/") }}>
                         Logout
                     </Button>
                 </div>
             </Card>
 
+            {/* Overlay for mobile */}
+            {isMobileMenuOpen && (
+                <div
+                    className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                />
+            )}
+
             {/* Main Content */}
-            <div className="flex-1 p-4">
-                <div className="flex justify-between ">
-                    <h1 className=" font-bold press-start-2p-regular">{email}</h1>
-                    <div className="flex items-center gap-3 m-2">
+            <div className="flex-1 p-2 sm:p-4 lg:ml-0">
+                <div className="flex flex-col sm:flex-row justify-between gap-2 sm:gap-0 mb-4">
+                    <h1 className="text-sm sm:text-base md:text-lg font-bold press-start-2p-regular break-all">{email}</h1>
+                    <div className="flex items-center gap-2 sm:gap-3">
                         <ConnectButton/>
                     </div>
                 </div>

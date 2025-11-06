@@ -70,59 +70,59 @@ const SignUp = () => {
     }
 
     return (
-        <div className="flex justify-center items-center h-screen" style={{ backgroundImage: `url(${bg})`}}>
+        <div className="flex justify-center items-center min-h-screen p-4" style={{ backgroundImage: `url(${bg})`, backgroundSize: 'cover', backgroundPosition: 'center'}}>
             {Loading ? <div className="flex justify-center items-center h-40 ">
                 <ScatterBoxLoader
                     primaryColor={"#6366F1"}
                     secondaryColor={"#E0E7FF"}
                 />
-            </div> : <Card className="w-[490px] ">
+            </div> : <Card className="w-full max-w-[490px] mx-auto">
                 <CardHeader>
-                    <Label className="text-2xl font-semibold flex justify-center items-center">
+                    <Label className="text-xl sm:text-2xl font-semibold flex justify-center items-center">
                         Sign Up
                     </Label>
                 </CardHeader>
 
                 <CardContent>
                     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                        <div className="flex justify-center items-center">
-                            <Label className="w-2xs font-bold">FullName</Label>
+                        <div className="flex flex-col sm:flex-row sm:justify-center sm:items-center gap-2 sm:gap-4">
+                            <Label className="text-sm sm:text-base font-bold sm:w-2xs">FullName</Label>
                             <Input
                                 name="name"
                                 type="text"
                                 placeholder="Enter ur FullName"
                                 required
                                 onChange={handleChange}
-                                className="w-[450px]"
+                                className="w-full sm:w-[450px]"
                             />
                         </div>
 
-                        <div className="flex justify-center items-center gap-4 m-4">
-                            <Label className="w-3xs font-bold">Email</Label>
+                        <div className="flex flex-col sm:flex-row sm:justify-center sm:items-center gap-2 sm:gap-4 m-2 sm:m-4">
+                            <Label className="text-sm sm:text-base font-bold sm:w-3xs">Email</Label>
                             <Input
                                 name="email"
                                 type="email"
                                 placeholder="Enter ur Email"
                                 required
                                 onChange={handleChange}
-                                className="w-[450px]"
+                                className="w-full sm:w-[450px]"
                             />
                         </div>
 
-                        <div className="flex justify-center items-center gap-4">
-                            <Label className="w-3xs font-bold">Password</Label>
+                        <div className="flex flex-col sm:flex-row sm:justify-center sm:items-center gap-2 sm:gap-4">
+                            <Label className="text-sm sm:text-base font-bold sm:w-3xs">Password</Label>
                             <Input
                                 name="password"
                                 type="password"
                                 placeholder="Enter ur Password"
                                 required
                                 onChange={handleChange}
-                                className="w-[450px]"
+                                className="w-full sm:w-[450px]"
                             />
                         </div>
 
-                        <CardFooter className="flex justify-center items-center">
-                            <Button type="submit">Sign Up</Button>
+                        <CardFooter className="flex justify-center items-center pt-4">
+                            <Button type="submit" className="w-full sm:w-auto">Sign Up</Button>
                         </CardFooter>
                     </form>
                 </CardContent>

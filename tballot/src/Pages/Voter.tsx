@@ -45,33 +45,33 @@ const VoterList = () => {
   if (!isConnected) return <WalletConnect />;
 
   return (
-    <div className="flex flex-wrap justify-center gap-8 p-10 bg-gray-100 min-h-screen">
+    <div className="flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-8 p-4 sm:p-6 md:p-10 bg-gray-100 min-h-screen">
       {loading ? (
-        <div className="text-lg font-semibold">Loading voters...</div>
+        <div className="text-base sm:text-lg font-semibold">Loading voters...</div>
       ) : voters.length === 0 ? (
-        <div className="text-lg font-semibold">No registered voters yet!</div>
+        <div className="text-base sm:text-lg font-semibold">No registered voters yet!</div>
       ) : (
         voters.map((voter, index) => (
           <div
             key={index}
-            className="w-64 h-auto rounded-lg border-2 border-black p-3 border-r-8 border-b-8 hover:-translate-y-1 duration-200 bg-white text-center shadow-md"
+            className="w-full sm:w-56 md:w-64 h-auto rounded-lg border-2 border-black p-3 border-r-4 sm:border-r-8 border-b-4 sm:border-b-8 hover:-translate-y-1 duration-200 bg-white text-center shadow-md"
           >
             <img
               src={voter.image}
               alt={voter.name}
-              className="w-24 h-24 rounded-full mx-auto mb-3 border-2 border-black object-cover"
+              className="w-20 h-20 sm:w-24 sm:h-24 rounded-full mx-auto mb-3 border-2 border-black object-cover"
             />
-            <div className="border-2 border-black p-2 rounded-sm press-start-2p-regular mb-3">
+            <div className="border-2 border-black p-2 rounded-sm press-start-2p-regular mb-3 text-xs sm:text-sm">
               {voter.name}
             </div>
             <div className="flex justify-center gap-2">
               <div
                 onClick={() => handleCopy(voter.address)}
-                className="border-2 px-2 py-1 flex items-center gap-1 border-black rounded-sm press-start-2p-regular border-r-5 border-b-5 cursor-pointer active:bg-blue-400 transition-colors duration-200"
+                className="border-2 px-2 py-1 flex items-center gap-1 border-black rounded-sm press-start-2p-regular border-r-3 sm:border-r-5 border-b-3 sm:border-b-5 cursor-pointer active:bg-blue-400 transition-colors duration-200 text-xs sm:text-sm"
               >
-                <Copy size={14} /> copy
+                <Copy size={12} className="sm:w-3.5 sm:h-3.5" /> copy
               </div>
-              <div className="border-2 px-2 py-1 border-black rounded-sm press-start-2p-regular border-r-5 border-b-5 cursor-pointer active:bg-green-500 transition-colors duration-200">
+              <div className="border-2 px-2 py-1 border-black rounded-sm press-start-2p-regular border-r-3 sm:border-r-5 border-b-3 sm:border-b-5 cursor-pointer active:bg-green-500 transition-colors duration-200 text-xs sm:text-sm">
                 verify
               </div>
             </div>
