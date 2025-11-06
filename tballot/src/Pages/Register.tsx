@@ -88,7 +88,10 @@ const Register = () => {
 
 
 
-  if(!isConnected)  <WalletConnect/>
+  if (!isConnected) {
+    return <WalletConnect />;
+  }
+  
   return (
     <div className="flex items-center justify-center bg-gray-100 mt-4 sm:mt-10 md:mt-20 p-4">
       
