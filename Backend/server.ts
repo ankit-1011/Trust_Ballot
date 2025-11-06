@@ -21,11 +21,11 @@ app.use(cors({origin: "http://localhost:5173",credentials: true}));
 
 app.use(express.json());
 
-const mongoURI = "mongodb://127.0.0.1:27017/trustballot";
+const mongoURI = process.env.MONGO_URI;
 
 
 
-mongoose.connect(mongoURI)
+mongoose.connect(mongoURI as string)
   .then(() => {
     console.log("MongoDB connected");
   })
