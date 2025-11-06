@@ -1,4 +1,4 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getAllVoters } from "../Contracts/etherContracts";
 import { useAccount } from "wagmi";
 import { Copy } from "lucide-react";
@@ -10,39 +10,31 @@ const VoterList = () => {
   const [voters, setVoters] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
- 
-
   const handleCopy = (addr: string) => {
     navigator.clipboard.writeText(addr);
     toast("Address copied!");
   };
 
- useEffect(() => {
-  const fetchVoters = async () => {
-    if (!isConnected) return;
-    setLoading(true);
-    try {
-      const allVoters = await getAllVoters();
-      setVoters(allVoters);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-  fetchVoters();
-}, [isConnected]);
+  useEffect(() => {
+    const fetchVoters = async () => {
+      if (!isConnected) return;
+      setLoading(true);
+      try {
+        const allVoters = await getAllVoters();
+        setVoters(allVoters);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchVoters();
+  }, [isConnected]);
 
-
-
-
-
-
-
-
-
-
-  if (!isConnected) return <WalletConnect />;
+  // ✅ FIXED RETURN CONDITION
+  if (!isConnected) {
+    return <WalletConnect />;
+  }
 
   return (
     <div className="flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-8 p-4 sm:p-6 md:p-10 bg-gray-100 min-h-screen">
