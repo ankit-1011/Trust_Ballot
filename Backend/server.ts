@@ -70,12 +70,11 @@ try{
   });
 
   await newUser.save();
+   await signUpMail(email,name);
   res.status(201).json({message:"User Registered Successfuly"});
-
-  await signUpMail(email,name);
-}catch(err){
-  console.error(err);
-  res.status(500).json({message:"Server Error"});
+} catch (err:any) {
+  console.error("Signup error:", err);
+  res.status(500).json({ message: "Server Error", error: err.message });
 }
 })
 
