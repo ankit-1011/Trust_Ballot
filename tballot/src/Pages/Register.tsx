@@ -14,8 +14,6 @@ import { selfRegister, getVoter } from "../Contracts/etherContracts";
 import axios from "axios";
 
 
-const PINATA_API_KEY = import.meta.env.VITE_PINATA_API_KEY;
-const PINATA_SECRET_API_KEY = import.meta.env.VITE_PINATA_SECRET_API_KEY;
 
 const Register = () => {
   const { address, isConnected } = useAccount();
@@ -32,6 +30,7 @@ const Register = () => {
           const voter = await getVoter(address);
           if (voter && voter.name) {
             setVoterData(voter);
+            console.log(voterData)
           }
         } catch (err) {
           console.log("Voter not found or not registered yet.");

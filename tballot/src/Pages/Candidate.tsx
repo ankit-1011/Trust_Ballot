@@ -10,7 +10,6 @@ import { getContractSigner } from "../Contracts/etherContracts";
 const Candidate = () => {
   const { isConnected } = useAccount();
   const [name, setName] = useState("");
-  const [meta, setMeta] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
 

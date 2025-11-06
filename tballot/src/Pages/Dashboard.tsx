@@ -1,6 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { ChartExample } from "@/components/ui/8bit/blocks/chart";
+import  { useEffect, useState } from "react";
 import WalletConnect from "./WalletConnect";
 import { useAccount } from "wagmi";
 import { SquareArrowOutUpRight } from "lucide-react";
@@ -46,10 +45,6 @@ const Dashboard = () => {
 
   return (
     <div className="flex flex-col items-center mt-10">
-      {/* Example Chart */}
-      <div className="w-[500px] mb-10 bg-fuchsia-100 rounded-lg p-4 shadow-lg">
-        <ChartExample />
-      </div>
 
       {/* Candidate Cards */}
       <div className="flex flex-wrap gap-6 justify-center">

@@ -23,7 +23,7 @@ const App = () => {
     <>
       <WagmiProvider config={config}>
         <QueryClientProvider client={queryClient}>
-          <RainbowKitProvider chains={config.chains} theme={darkTheme()}>
+          <RainbowKitProvider  theme={darkTheme()}>
             <Cursor />
             <Routes >
               <Route path="/" element={<Home />} />

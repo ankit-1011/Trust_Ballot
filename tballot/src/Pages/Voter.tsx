@@ -1,5 +1,5 @@
 import  { useEffect, useState } from "react";
-import { getAllVoters, getContractProvider, getVoter } from "../Contracts/etherContracts";
+import { getAllVoters } from "../Contracts/etherContracts";
 import { useAccount } from "wagmi";
 import { Copy } from "lucide-react";
 import { toast } from "@/components/ui/8bit/toast";
