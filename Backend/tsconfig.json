@@ -1,14 +1,14 @@
-
 {
   "compilerOptions": {
     "module": "NodeNext",
     "target": "ES2020",
     "moduleResolution": "NodeNext",
-    "esModuleInterop": true,
     "outDir": "dist",
+    "esModuleInterop": true,
     "strict": true,
     "resolveJsonModule": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "allowJs": true
   },
   "include": ["**/*.ts"],
   "exclude": ["node_modules", "dist"]

@@ -76,12 +76,12 @@ const Login = () => {
                         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                             <div className="flex justify-center items-center gap-4">
                                 <Label className="w-3xs font-bold">Email</Label>
-                                <Input name="email" type="email" placeholder="enter ur email" required value={formData.email} onChange={handleChange}  className="w-[450px]"/>
+                                <Input name="email" type="email" placeholder="enter ur email" required value={formData.email} onChange={handleChange}  className="w-[450px]" autoComplete="email"/>
                             </div>
 
                             <div className="flex justify-center items-center gap-4">
                                 <Label className="w-3xs font-bold">Password</Label>
-                                <Input name="password" type="password" placeholder="enter ur password" required value={formData.password} onChange={handleChange} className="w-[450px]"/>
+                                <Input name="password" type="password" placeholder="enter ur password" required value={formData.password} onChange={handleChange} className="w-[450px]" autoComplete="current-password"/>
                             </div>
 
                             <div className="flex justify-center items-center gap-4">

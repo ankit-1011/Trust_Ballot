@@ -7,8 +7,6 @@ import fs from "fs";
 const router = express.Router();
 const upload = multer({ dest: "uploads/" });
 
-const PINATA_API_KEY = process.env.VITE_PINATA_API_KEY;
-const PINATA_SECRET_API_KEY = process.env.VITE_PINATA_SECRET_API_KEY;
 
 router.post("/upload", upload.single("file"), async (req, res) => {
   try {
