@@ -90,21 +90,33 @@ export const voteCandidate = async (candidateId: number) => {
 
 // ✅ Get all voters (for frontend)
 export const getAllVoters = async () => {
-  const contract = getContractProvider();
-  // The contract returns [Voter[], address[]]
-  const [voterDataArray, addresses]: [any[], string[]] = await contract.getAllVoters();
+  try {
+    const contract = getContractProvider();
+    // The contract returns [Voter[], address[]]
+    const [voterDataArray, addresses]: [any[], string[]] = await contract.getAllVoters();
 
-  // Merge the data so each voter has its address
-  const voters = voterDataArray.map((v, i) => ({
-    name: v.name,
-    image: v.image,
-    isRegistered: v.isRegistered,
-    hasVoted: v.hasVoted,
-    votedId: v.votedId.toString(),
-    address: addresses[i],
-  }));
+    // Merge the data so each voter has its address with null checks
+    const voters = voterDataArray
+      .map((v, i) => {
+        // Check if voter data exists and is valid
+        if (!v || !addresses[i]) return null;
+        
+        return {
+          name: v.name || "Unknown",
+          image: v.image || "",
+          isRegistered: v.isRegistered || false,
+          hasVoted: v.hasVoted || false,
+          votedId: v.votedId ? v.votedId.toString() : "0",
+          address: addresses[i] || "",
+        };
+      })
+      .filter((voter) => voter !== null && voter.address); // Filter out null/invalid voters
 
-  return voters;
+    return voters;
+  } catch (error) {
+    console.error("Error fetching voters:", error);
+    return [];
+  }
 };
 
 
@@ -147,16 +159,21 @@ export const getWinner = async () => {
 
 // ✅ Get voter details
 export const getVoter = async (address: string) => {
-  const contract = getContractProvider();
-  const [name, image, isRegistered, hasVoted, votedId] =
-    await contract.getVoter(address);
-  return {
-    name,
-    image,
-    isRegistered,
-    hasVoted,
-    votedId: votedId.toString(),
-  };
+  try {
+    const contract = getContractProvider();
+    const [name, image, isRegistered, hasVoted, votedId] =
+      await contract.getVoter(address);
+    return {
+      name: name || "Unknown",
+      image: image || "",
+      isRegistered: isRegistered || false,
+      hasVoted: hasVoted || false,
+      votedId: votedId ? votedId.toString() : "0",
+    };
+  } catch (error) {
+    console.error("Error fetching voter:", error);
+    return null;
+  }
 };
 
 // ✅ Check if voter is registered
