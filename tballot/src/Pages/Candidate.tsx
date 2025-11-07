@@ -5,7 +5,7 @@ import WalletConnect from "./WalletConnect";
 import { useAccount } from "wagmi";
 import { Button } from "@/components/ui/8bit/button";
 import { toast } from "@/components/ui/8bit/toast";
-import { getContractSigner } from "../Contracts/etherContracts";
+import { getContractSigner, getAllCandidates } from "../Contracts/etherContracts";
 
 const Candidate = () => {
   const { isConnected } = useAccount();
@@ -49,10 +49,25 @@ const Candidate = () => {
 
     try {
       setLoading(true);
+      
+      // Check if candidate with same name already exists
+      const existingCandidates = await getAllCandidates();
+      const duplicateCandidate = existingCandidates.find(
+        (c: any) => c.name.toLowerCase().trim() === name.toLowerCase().trim()
+      );
+      
+      if (duplicateCandidate) {
+        toast("⚠️ A candidate with this name already exists!");
+        setLoading(false);
+        return;
+      }
+
       // 1️⃣ Upload image to Pinata
+      toast("Uploading image to IPFS...");
       const imageUrl = await uploadToPinata(file);
 
       // 2️⃣ Call smart contract
+      toast("Registering candidate on blockchain...");
       const contract = await getContractSigner();
       const tx = await contract.addCandidate(name, imageUrl);
       await tx.wait();
@@ -63,7 +78,12 @@ const Candidate = () => {
       setFile(null);
     } catch (err: any) {
       console.error(err);
-      toast(`Error: ${err.reason || err.message}`);
+      const errorMessage = err.reason || err.message || "Registration failed!";
+      if (errorMessage.includes("already exists") || errorMessage.includes("duplicate")) {
+        toast("⚠️ A candidate with this name already exists!");
+      } else {
+        toast(`❌ Error: ${errorMessage}`);
+      }
     } finally {
       setLoading(false);
     }

@@ -10,7 +10,7 @@ import {
 import { toast } from "@/components/ui/8bit/toast";
 import WalletConnect from "./WalletConnect";
 import { useAccount } from "wagmi";
-import { selfRegister, getVoter } from "../Contracts/etherContracts";
+import { selfRegister, getVoter, isVoterRegistered } from "../Contracts/etherContracts";
 import axios from "axios";
 import { API_ENDPOINTS } from "../config/api";
 
@@ -29,13 +29,17 @@ const Register = () => {
       if (isConnected && address) {
         try {
           const voter = await getVoter(address);
-          if (voter && voter.name) {
+          if (voter) {
             setVoterData(voter);
-            console.log(voterData)
+          } else {
+            setVoterData(null);
           }
         } catch (err) {
           console.log("Voter not found or not registered yet.");
+          setVoterData(null);
         }
+      } else {
+        setVoterData(null);
       }
     };
     fetchVoter();
@@ -62,15 +66,35 @@ const Register = () => {
       return;
     }
 
+    // Check if already registered
+    if (voterData && voterData.isRegistered) {
+      toast("⚠️ You are already registered as a voter!");
+      return;
+    }
+
     try {
       setLoading(true);
+      
+      // Double check on blockchain
+      if (address) {
+        const isRegistered = await isVoterRegistered(address);
+        if (isRegistered) {
+          toast("⚠️ You are already registered as a voter!");
+          setLoading(false);
+          // Refresh voter data
+          const voter = await getVoter(address);
+          setVoterData(voter);
+          return;
+        }
+      }
+
       toast("Uploading image to IPFS...");
       const imageUrl = await uploadToPinata(image);
 
       toast("Registering on blockchain...");
       await selfRegister(name, imageUrl);
 
-      toast("Registered successfully!");
+      toast("✅ Registered successfully!");
 
       // Fetch voter details again after register
       const voter = await getVoter(address!);
@@ -80,7 +104,17 @@ const Register = () => {
       setImage(null);
     } catch (error: any) {
       console.error(error);
-      toast(" Registration failed!");
+      const errorMessage = error.reason || error.message || "Registration failed!";
+      if (errorMessage.includes("already registered") || errorMessage.includes("Already registered")) {
+        toast("⚠️ You are already registered as a voter!");
+        // Refresh voter data
+        if (address) {
+          const voter = await getVoter(address);
+          setVoterData(voter);
+        }
+      } else {
+        toast(`❌ ${errorMessage}`);
+      }
     } finally {
       setLoading(false);
     }
@@ -104,43 +138,62 @@ const Register = () => {
               </CardHeader>
 
               <CardContent>
-                <form onSubmit={handleRegister} className="space-y-4 sm:space-y-6">
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-                    <label className="text-sm font-bold text-gray-700 sm:w-24">
-                      Full Name:
-                    </label>
-                    <input
-                      type="text"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="flex-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
-                      placeholder="Enter your name"
-                    />
+                {voterData && voterData.isRegistered ? (
+                  <div className="text-center space-y-4">
+                    <div className="p-4 bg-green-50 border-2 border-green-500 rounded-lg">
+                      <p className="text-green-700 font-semibold text-lg">✅ Already Registered!</p>
+                      <p className="text-sm text-gray-600 mt-2">Name: {voterData.name}</p>
+                      {voterData.image && (
+                        <img 
+                          src={voterData.image} 
+                          alt={voterData.name} 
+                          className="w-24 h-24 rounded-full mx-auto mt-3 border-2 border-green-500 object-cover"
+                        />
+                      )}
+                    </div>
+                    <p className="text-sm text-gray-500">You can only register once as a voter.</p>
                   </div>
+                ) : (
+                  <form onSubmit={handleRegister} className="space-y-4 sm:space-y-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                      <label className="text-sm font-bold text-gray-700 sm:w-24">
+                        Full Name:
+                      </label>
+                      <input
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="flex-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
+                        placeholder="Enter your name"
+                        disabled={loading}
+                      />
+                    </div>
 
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-                    <label className="text-sm font-bold text-gray-700 sm:w-24">
-                      Image:
-                    </label>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => setImage(e.target.files?.[0] || null)}
-                      className="flex-1 text-sm sm:text-base"
-                    />
-                  </div>
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                      <label className="text-sm font-bold text-gray-700 sm:w-24">
+                        Image:
+                      </label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => setImage(e.target.files?.[0] || null)}
+                        className="flex-1 text-sm sm:text-base"
+                        disabled={loading}
+                      />
+                    </div>
 
-                  <div className="flex justify-center pt-2">
-                    <Button
-                      type="submit"
-                      variant="default"
-                      disabled={loading}
-                      className="w-full sm:w-auto p-4 sm:p-6 bg-lime-600 text-white font-semibold rounded hover:bg-lime-700 transition duration-200 text-sm sm:text-base"
-                    >
-                      {loading ? "Registering..." : "Register"}
-                    </Button>
-                  </div>
-                </form>
+                    <div className="flex justify-center pt-2">
+                      <Button
+                        type="submit"
+                        variant="default"
+                        disabled={loading}
+                        className="w-full sm:w-auto p-4 sm:p-6 bg-lime-600 text-white font-semibold rounded hover:bg-lime-700 transition duration-200 text-sm sm:text-base"
+                      >
+                        {loading ? "Registering..." : "Register"}
+                      </Button>
+                    </div>
+                  </form>
+                )}
               </CardContent>
             </Card>
     </div>
