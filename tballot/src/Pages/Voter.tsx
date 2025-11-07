@@ -9,6 +9,7 @@ const VoterList = () => {
   const { isConnected } = useAccount();
   const [voters, setVoters] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [failedImages, setFailedImages] = useState<Set<string>>(new Set());
 
   const handleCopy = (addr: string) => {
     navigator.clipboard.writeText(addr);
@@ -50,14 +51,21 @@ const VoterList = () => {
               key={voter.address || index}
               className="w-full sm:w-56 md:w-64 h-auto rounded-lg border-2 border-black p-3 border-r-4 sm:border-r-8 border-b-4 sm:border-b-8 hover:-translate-y-1 duration-200 bg-white text-center shadow-md"
             >
-              <img
-                src={voter.image || "https://via.placeholder.com/150"}
-                alt={voter.name || "Voter"}
-                className="w-20 h-20 sm:w-24 sm:h-24 rounded-full mx-auto mb-3 border-2 border-black object-cover"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = "https://via.placeholder.com/150";
-                }}
-              />
+              {voter.image && !failedImages.has(voter.image) ? (
+                <img
+                  src={voter.image}
+                  alt={voter.name || "Voter"}
+                  className="w-20 h-20 sm:w-24 sm:h-24 rounded-full mx-auto mb-3 border-2 border-black object-cover"
+                  onError={() => {
+                    // Mark this image as failed
+                    setFailedImages((prev) => new Set(prev).add(voter.image));
+                  }}
+                />
+              ) : (
+                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full mx-auto mb-3 border-2 border-black bg-gray-200 flex items-center justify-center">
+                  <span className="text-xs sm:text-sm text-gray-500">No Image</span>
+                </div>
+              )}
               <div className="border-2 border-black p-2 rounded-sm press-start-2p-regular mb-3 text-xs sm:text-sm">
                 {voter.name || "Unknown"}
               </div>

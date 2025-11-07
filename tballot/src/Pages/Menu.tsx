@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/8bit/card";
 import { Button } from "@/components/ui/8bit/button";
-import { Home, User, List, Boxes, Menu as MenuIcon, X } from "lucide-react";
+import { Home, User, List, Boxes, Menu as MenuIcon, X, ToggleLeft } from "lucide-react";
 import { Separator } from "@/components/ui/8bit/separator";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/8bit/toast";
@@ -43,6 +43,9 @@ export default function Menu() {
                     </Button>
                     <Button variant="ghost" className="w-full justify-start gap-2 sm:gap-3 text-sm sm:text-base" onClick={() => { Navigate("/menu/register"); setIsMobileMenuOpen(false); }}>
                         <Boxes size={20} />Register
+                    </Button>
+                    <Button variant="ghost" className="w-full justify-start gap-2 sm:gap-3 text-sm sm:text-base" onClick={() => { Navigate("/toggle"); setIsMobileMenuOpen(false); }}>
+                        <ToggleLeft size={20} />Toggle Election
                     </Button>
                 </nav>
                 <div className="p-4 sm:p-6 border-t border-gray-300">

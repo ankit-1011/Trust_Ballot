@@ -6,6 +6,8 @@ import { useAccount } from "wagmi";
 import { Button } from "@/components/ui/8bit/button";
 import { toast } from "@/components/ui/8bit/toast";
 import { getContractSigner, getAllCandidates } from "../Contracts/etherContracts";
+import axios from "axios";
+import { API_ENDPOINTS } from "../config/api";
 
 const Candidate = () => {
   const { isConnected } = useAccount();
@@ -13,23 +15,18 @@ const Candidate = () => {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // ✅ Upload image to Pinata
+  // ✅ Upload image to Pinata via backend
   const uploadToPinata = async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
 
     try {
-      const res = await fetch("https://api.pinata.cloud/pinning/pinFileToIPFS", {
-        method: "POST",
-        headers: {
-          pinata_api_key: process.env.VITE_PINATA_API_KEY!,
-          pinata_secret_api_key: process.env.VITE_PINATA_SECRET_API_KEY!,
-        },
-        body: formData,
+      const res = await axios.post(API_ENDPOINTS.UPLOAD, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
-      const data = await res.json();
-      return `https://gateway.pinata.cloud/ipfs/${data.IpfsHash}`;
+      const ipfsHash = res.data.IpfsHash;
+      return `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
     } catch (error) {
       console.error("Pinata upload failed:", error);
       throw new Error("Image upload failed");

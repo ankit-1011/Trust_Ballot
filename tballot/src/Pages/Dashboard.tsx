@@ -32,10 +32,14 @@ const Dashboard = () => {
       const contract = await getContractSigner();
       const tx = await contract.vote(id);
       await tx.wait();
-      toast(` Successfully voted for candidate #${id}`);
+      toast(`✅ Successfully voted for candidate #${id}`);
+      
+      // Refresh candidates list to update vote counts
+      const updatedList = await getAllCandidates();
+      setCandidates(updatedList);
     } catch (err: any) {
       console.error(err);
-      toast(` Error: ${err.reason || err.message}`);
+      toast(`❌ Error: ${err.reason || err.message}`);
     } finally {
       setLoading(false);
     }
@@ -54,7 +58,7 @@ const Dashboard = () => {
           candidates.map((c) => (
             <div
               key={c.id}
-              className="w-full sm:w-56 md:w-60 h-auto sm:h-52 border-3 border-black rounded-lg border-r-4 sm:border-r-8 border-b-4 sm:border-b-8 hover:-translate-y-1 duration-200"
+              className="w-full sm:w-56 md:w-60 h-auto sm:h-auto border-3 border-black rounded-lg border-r-4 sm:border-r-8 border-b-4 sm:border-b-8 hover:-translate-y-1 duration-200 bg-white"
             >
               <SquareArrowOutUpRight className='hover:translate-y-0.5 duration-100 cursor-pointer m-2' />
           
@@ -64,6 +68,20 @@ const Dashboard = () => {
                   alt={c.name}
                   className="w-full h-full object-cover rounded"
                 />
+              </div>
+              
+              {/* Candidate Name */}
+              <div className="px-2 sm:px-3 mt-2 mb-1">
+                <p className="text-sm sm:text-base font-bold press-start-2p-regular text-center">{c.name}</p>
+              </div>
+              
+              {/* Votes Count */}
+              <div className="px-2 sm:px-3 mb-2">
+                <div className="border-2 border-black rounded-sm p-1 sm:p-2 bg-blue-50">
+                  <p className="text-xs sm:text-sm press-start-2p-regular text-center">
+                    Votes: <span className="font-bold text-blue-600">{c.voteCount || "0"}</span>
+                  </p>
+                </div>
               </div>
               
               <div
