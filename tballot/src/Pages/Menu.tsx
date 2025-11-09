@@ -36,13 +36,13 @@ export default function Menu() {
                         <Home size={24} className="sm:w-8 sm:h-8" /> Dashboard
                     </Button>
                     <Button variant="ghost" className="w-full justify-start gap-2 sm:gap-3 text-sm sm:text-base" onClick={() => { Navigate("/menu/candidate-list"); setIsMobileMenuOpen(false); }}>
-                        <User size={24} className="sm:w-10 sm:h-10" /> Candidate List
+                        <User size={24} className="sm:w-10 sm:h-10" /> c-Register
                     </Button>
                     <Button variant="ghost" className="w-full justify-start gap-2 sm:gap-3 text-sm sm:text-base" onClick={() => { Navigate("/menu/voter-list"); setIsMobileMenuOpen(false); }}>
                         <List size={18} /> Voter List
                     </Button>
                     <Button variant="ghost" className="w-full justify-start gap-2 sm:gap-3 text-sm sm:text-base" onClick={() => { Navigate("/menu/register"); setIsMobileMenuOpen(false); }}>
-                        <Boxes size={20} />Register
+                        <Boxes size={20} />v-Register
                     </Button>
                     <Button variant="ghost" className="w-full justify-start gap-2 sm:gap-3 text-sm sm:text-base" onClick={() => { Navigate("/toggle"); setIsMobileMenuOpen(false); }}>
                         <ToggleLeft size={20} />Toggle Election

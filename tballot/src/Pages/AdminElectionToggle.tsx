@@ -1,5 +1,5 @@
 "use client";
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/8bit/button";
 import { toast } from "@/components/ui/8bit/toast";
 import { getContractProvider, startElection, endElection, getWinner } from "../Contracts/etherContracts";
@@ -13,36 +13,37 @@ const AdminElectionToggle = () => {
   const [winner, setWinner] = useState<{ id: string; name: string; votes: string } | null>(null);
 
   // ✅ Fetch current election state from contract
- useEffect(() => {
-  const fetchState = async () => {
-    if (!isConnected) return;
-    try {
-      const contract = getContractProvider();
-      const state = await contract.state(); // returns 0,1,2
-      const mapping: ("CREATED" | "ONGOING" | "ENDED")[] = ["CREATED", "ONGOING", "ENDED"];
-      setElectionState(mapping[state]);
-      
-      // If election is ended, fetch winner
-      if (mapping[state] === "ENDED") {
-        try {
-          const w = await getWinner();
-          setWinner(w);
-        } catch (err) {
-          console.error("Error fetching winner:", err);
+  useEffect(() => {
+    const fetchState = async () => {
+      if (!isConnected) return;
+      try {
+        const contract = getContractProvider();
+        const state = await contract.state(); // returns 0,1,2
+        const mapping: ("CREATED" | "ONGOING" | "ENDED")[] = ["CREATED", "ONGOING", "ENDED"];
+        setElectionState(mapping[state]);
+
+        // If election is ended, fetch winner
+        if (mapping[state] === "ENDED") {
+          try {
+            const w = await getWinner();
+            console.log(w)
+            setWinner(w);
+          } catch (err) {
+            console.error("Error fetching winner:", err);
+          }
+        } else {
+          setWinner(null);
         }
-      } else {
-        setWinner(null);
+      } catch (err) {
+        console.error(err);
       }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-  fetchState();
-  
-  // Refresh state every 5 seconds
-  const interval = setInterval(fetchState, 5000);
-  return () => clearInterval(interval);
-}, [isConnected]);
+    };
+    fetchState();
+
+    // Refresh state every 5 seconds
+    const interval = setInterval(fetchState, 5000);
+    return () => clearInterval(interval);
+  }, [isConnected]);
 
 
   if (!isConnected) return <WalletConnect />;
@@ -75,7 +76,7 @@ const AdminElectionToggle = () => {
         setWinner(null); // Clear previous winner
         toast(" New Election started!");
       }
-      
+
       // Refresh state from contract
       const contract = getContractProvider();
       const state = await contract.state();
@@ -100,11 +101,10 @@ const AdminElectionToggle = () => {
         <div className="bg-white border-2 border-black rounded-lg p-4 sm:p-6 shadow-lg">
           <div className="text-center mb-4">
             <p className="text-sm sm:text-base font-semibold mb-2">Current State:</p>
-            <div className={`inline-block px-4 py-2 rounded ${
-              electionState === "CREATED" ? "bg-yellow-100 text-yellow-800" :
-              electionState === "ONGOING" ? "bg-green-100 text-green-800" :
-              "bg-gray-100 text-gray-800"
-            }`}>
+            <div className={`inline-block px-4 py-2 rounded ${electionState === "CREATED" ? "bg-yellow-100 text-yellow-800" :
+                electionState === "ONGOING" ? "bg-green-100 text-green-800" :
+                  "bg-gray-100 text-gray-800"
+              }`}>
               <span className="font-bold">{electionState}</span>
             </div>
           </div>
@@ -112,16 +112,15 @@ const AdminElectionToggle = () => {
           <Button
             onClick={handleToggle}
             disabled={loading}
-            className={`w-full p-4 sm:p-6 text-base sm:text-lg ${
-              electionState === "CREATED" ? "bg-green-600 hover:bg-green-700" : 
-              electionState === "ONGOING" ? "bg-red-600 hover:bg-red-700" :
-              "bg-blue-600 hover:bg-blue-700"
-            } text-white font-semibold rounded transition-colors`}
+            className={`w-full p-4 sm:p-6 text-base sm:text-lg ${electionState === "CREATED" ? "bg-green-600 hover:bg-green-700" :
+                electionState === "ONGOING" ? "bg-red-600 hover:bg-red-700" :
+                  "bg-blue-600 hover:bg-blue-700"
+              } text-white font-semibold rounded transition-colors`}
           >
-            {loading ? "Processing..." : 
-             electionState === "CREATED" ? "▶️ Start Election" : 
-             electionState === "ONGOING" ? "⏹️ End Election" : 
-             "🔄 Start New Election"}
+            {loading ? "Processing..." :
+              electionState === "CREATED" ? "▶️ Start Election" :
+                electionState === "ONGOING" ? "⏹️ End Election" :
+                  "🔄 Start New Election"}
           </Button>
         </div>
 

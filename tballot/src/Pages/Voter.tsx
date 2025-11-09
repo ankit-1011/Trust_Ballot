@@ -49,7 +49,7 @@ const VoterList = () => {
           .map((voter, index) => (
             <div
               key={voter.address || index}
-              className="w-full sm:w-56 md:w-64 h-auto rounded-lg border-2 border-black p-3 border-r-4 sm:border-r-8 border-b-4 sm:border-b-8 hover:-translate-y-1 duration-200 bg-white text-center shadow-md"
+              className="w-full sm:w-56 md:w-64 h-64 rounded-lg border-2 border-black p-3 border-r-4 sm:border-r-8 border-b-4 sm:border-b-8 hover:-translate-y-1 duration-200  text-center shadow-md"
             >
               {voter.image && !failedImages.has(voter.image) ? (
                 <img
@@ -66,7 +66,7 @@ const VoterList = () => {
                   <span className="text-xs sm:text-sm text-gray-500">No Image</span>
                 </div>
               )}
-              <div className="border-2 border-black p-2 rounded-sm press-start-2p-regular mb-3 text-xs sm:text-sm">
+              <div className="border-2 border-black bg-violet-300 p-2 rounded-sm press-start-2p-regular mb-3 text-xs sm:text-sm">
                 {voter.name || "Unknown"}
               </div>
               <div className="flex justify-center gap-2">

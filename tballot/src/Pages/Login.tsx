@@ -49,12 +49,12 @@ const Login = () => {
                
             } else {
                 setLoading(false);
-                toast("Login Failed ⚠️");
+                toast("Login Failed");
                 setFormData({ email: "", password: "" })
             }
         } catch (err) {
             setLoading(false);
-            toast("Server not responding ⚠️");
+            toast("Server not responding");
             setFormData({ email: "", password: "" })
             console.error(err);
         }

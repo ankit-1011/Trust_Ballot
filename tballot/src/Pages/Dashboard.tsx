@@ -86,7 +86,7 @@ const Dashboard = () => {
               
               <div
                 onClick={() => handleVote(c.id)}
-                className={`w-full sm:w-27 h-8 ml-2 sm:ml-3 mt-2 mb-2 sm:mb-0 text-center leading-8 border-3 border-black border-r-3 sm:border-r-5 border-b-3 sm:border-b-5 rounded-sm press-start-2p-regular text-xs sm:text-sm cursor-pointer ${
+                className={`w-full sm:w-27 h-8 bg-amber-200  sm:ml-3 sm:mb-1 text-center leading-8 border-3 border-black border-r-3 sm:border-r-5 border-b-3 sm:border-b-5 rounded-sm press-start-2p-regular text-xs sm:text-sm cursor-pointer ${
                   loading ? "bg-gray-400" : "active:bg-violet-400"
                 } transition-colors duration-200`}
               >

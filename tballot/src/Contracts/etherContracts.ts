@@ -1,27 +1,27 @@
 import { ethers } from "ethers";
 import { CONTRACT_ADDRESS, CONTRACT_ABI } from "../../contractConfig";
 
-// ✅ Provider Setup
+//  Provider Setup
 export const getprovider = () => {
   if (!window.ethereum)
     throw new Error("No crypto wallet found. Please install MetaMask.");
   return new ethers.BrowserProvider(window.ethereum);
 };
 
-// ✅ Signer (wallet user)
+// Signer (wallet user)
 export const getSigner = async () => {
   const provider = getprovider();
   await provider.send("eth_requestAccounts", []);
   return provider.getSigner();
 };
 
-// ✅ Contract (read-only)
+//  Contract (read-only)
 export const getContractProvider = () => {
   const provider = getprovider();
   return new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
 };
 
-// ✅ Contract (write-enabled)
+//  Contract (write-enabled)
 export const getContractSigner = async () => {
   const signer = await getSigner();
   return new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
@@ -31,7 +31,7 @@ export const getContractSigner = async () => {
 // 🔹 Admin Functions
 // ------------------------------------------------------------
 
-// ✅ Add new candidate (Admin only)
+// Add new candidate (Admin only)
 export const addCandidate = async (name: string, meta: string) => {
   const contract = await getContractSigner();
   const tx = await contract.addCandidate(name, meta);
@@ -39,7 +39,7 @@ export const addCandidate = async (name: string, meta: string) => {
   console.log("Candidate added successfully");
 };
 
-// ✅ Register voter manually (Admin only)
+// Register voter manually (Admin only)
 export const registerVoter = async (
   voterAddress: string,
   name: string,
@@ -52,7 +52,7 @@ export const registerVoter = async (
 };
 
 
-// ✅ Start election (Admin only)
+// Start election (Admin only)
 export const startElection = async () => {
   const contract = await getContractSigner();
   const tx = await contract.startElection();
@@ -60,35 +60,35 @@ export const startElection = async () => {
   console.log(" Election started!");
 };
 
-// ✅ End election (Admin only)
+// End election (Admin only)
 export const endElection = async () => {
   const contract = await getContractSigner();
   const tx = await contract.endElection();
   await tx.wait();
-  console.log("✅ Election ended!");
+  console.log("Election ended!");
 };
 
 // ------------------------------------------------------------
-// 🔹 Voter Functions
+//  Voter Functions
 // ------------------------------------------------------------
 
-// ✅ Self registration (voter using wallet)
+//  Self registration (voter using wallet)
 export const selfRegister = async (name: string, image: string) => {
   const contract = await getContractSigner();
   const tx = await contract.selfRegister(name, image);
   await tx.wait();
-  console.log("✅ Voter self-registered successfully!");
+  console.log(" Voter self-registered successfully!");
 };
 
-// ✅ Cast vote
+// Cast vote
 export const voteCandidate = async (candidateId: number) => {
   const contract = await getContractSigner();
   const tx = await contract.vote(candidateId);
   await tx.wait();
-  console.log("🗳️ Vote cast successfully!");
+  console.log(" Vote cast successfully!");
 };
 
-// ✅ Get all voters (for frontend)
+// Get all voters (for frontend)
 export const getAllVoters = async () => {
   try {
     const contract = getContractProvider();
@@ -100,7 +100,7 @@ export const getAllVoters = async () => {
       .map((v, i) => {
         // Check if voter data exists and is valid
         if (!v || !addresses[i]) return null;
-        
+
         return {
           name: v.name || "Unknown",
           image: v.image || "",
@@ -124,14 +124,14 @@ export const getAllVoters = async () => {
 // 🔹 View / Read Functions
 // ------------------------------------------------------------
 
-// ✅ Get single candidate details
+// Get single candidate details
 export const getCandidate = async (id: number) => {
   const contract = getContractProvider();
   const [candidateId, name, meta, votes] = await contract.getCandidate(id);
   return { candidateId, name, meta, votes: votes.toString() };
 };
 
-// ✅ Get all candidates
+// Get all candidates
 export const getAllCandidates = async () => {
   const contract = getContractProvider();
   const candidates = await contract.getAllCandidates();
@@ -143,21 +143,21 @@ export const getAllCandidates = async () => {
   }));
 };
 
-// ✅ Get number of candidates
+// Get number of candidates
 export const getCandidatesCount = async () => {
   const contract = getContractProvider();
   const count = await contract.getCandidatesCount();
   return count.toString();
 };
 
-// ✅ Get winner (after election ended)
+//  Get winner (after election ended)
 export const getWinner = async () => {
   const contract = getContractProvider();
   const [id, name, votes] = await contract.getWinner();
   return { id, name, votes: votes.toString() };
 };
 
-// ✅ Get voter details
+//  Get voter details
 export const getVoter = async (address: string) => {
   try {
     const contract = getContractProvider();
@@ -176,13 +176,13 @@ export const getVoter = async (address: string) => {
   }
 };
 
-// ✅ Check if voter is registered
+// Check if voter is registered
 export const isVoterRegistered = async (address: string) => {
   const contract = getContractProvider();
   return await contract.isVoterRegistered(address);
 };
 
-// ✅ Check if voter has voted
+//  Check if voter has voted
 export const hasVoted = async (address: string) => {
   const contract = getContractProvider();
   return await contract.hasVoted(address);
