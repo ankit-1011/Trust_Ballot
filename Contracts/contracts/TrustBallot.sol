@@ -78,7 +78,7 @@ function registerVoter(address _voter, string calldata _name, string calldata _i
 function selfRegister(string calldata _name, string calldata _image) external {
     require(!voters[msg.sender].isRegistered, "Already registered");
     voters[msg.sender] = Voter(_name, _image, true, false, 0);
-    voterAddresses.push(msg.sender); // ✅ track the voter address
+    voterAddresses.push(msg.sender); //  track the voter address
     emit VoterRegistered(msg.sender, _name, _image);
 }
 
@@ -92,12 +92,25 @@ function getAllVoters() public view returns (Voter[] memory, address[] memory) {
 }
 
     // ---------- Election Controls ----------
-    function startElection() external onlyOwner {
-        require(state == ElectionState.CREATED, "Already started or ended");
-        require(candidateIds.length >= 1, "No candidates");
-        state = ElectionState.ONGOING;
-        emit ElectionStarted();
+  function startElection() external onlyOwner {
+    require(state == ElectionState.CREATED || state == ElectionState.ENDED, "Election is ongoing");
+
+    // 🧹 Reset all candidates and voters for new election
+    for (uint256 i = 0; i < candidateIds.length; i++) {
+        delete candidates[candidateIds[i]];
     }
+    delete candidateIds;
+    nextCandidateId = 1;
+
+    for (uint256 i = 0; i < voterAddresses.length; i++) {
+        delete voters[voterAddresses[i]];
+    }
+    delete voterAddresses;
+
+    state = ElectionState.ONGOING;
+    emit ElectionStarted();
+}
+
 
     function endElection() external onlyOwner {
         require(state == ElectionState.ONGOING, "Election not ongoing");
@@ -145,26 +158,38 @@ function getAllVoters() public view returns (Voter[] memory, address[] memory) {
         return candidateIds.length;
     }
 
-    function getWinner()
-        public
-        view
-        returns (uint256 winnerId, string memory winnerName, uint256 winnerVotes)
-    {
-        require(state == ElectionState.ENDED, "Election not ended");
-        uint256 topId = 0;
-        uint256 topVotes = 0;
-        for (uint256 i = 0; i < candidateIds.length; i++) {
-            Candidate storage c = candidates[candidateIds[i]];
-            if (c.voteCount > topVotes) {
-                topVotes = c.voteCount;
-                topId = c.id;
-            }
+   function getWinner()
+    public
+    view
+    returns (uint256 winnerId, string memory winnerName, uint256 winnerVotes, string memory status)
+{
+    require(state == ElectionState.ENDED, "Election not ended");
+
+    uint256 topId = 0;
+    uint256 topVotes = 0;
+    uint256 tieCount = 0;
+
+    for (uint256 i = 0; i < candidateIds.length; i++) {
+        Candidate storage c = candidates[candidateIds[i]];
+        if (c.voteCount > topVotes) {
+            topVotes = c.voteCount;
+            topId = c.id;
+            tieCount = 1; // reset tie count
+        } else if (c.voteCount == topVotes) {
+            tieCount++;
         }
-        if (topId == 0) {
-            return (0, "", 0);
-        }
-        return (topId, candidates[topId].name, candidates[topId].voteCount);
     }
+
+    if (topVotes == 0) {
+        return (0, "", 0, "No winner");
+    }
+
+    if (tieCount > 1) {
+        return (0, "", topVotes, "Election tied");
+    }
+
+    return (topId, candidates[topId].name, topVotes, "Winner declared");
+}
 
     function isVoterRegistered(address _addr) public view returns (bool) {
         return voters[_addr].isRegistered;

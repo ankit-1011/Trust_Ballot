@@ -32,7 +32,7 @@ const VoterList = () => {
     fetchVoters();
   }, [isConnected]);
 
-  // ✅ FIXED RETURN CONDITION
+  //  FIXED RETURN CONDITION
   if (!isConnected) {
     return <WalletConnect />;
   }

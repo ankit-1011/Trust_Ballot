@@ -25,9 +25,8 @@ export default function Menu() {
             </button>
 
             {/* Sidebar */}
-            <Card className={`fixed lg:static inset-y-0 left-0 z-40 w-64 sm:w-72 bg-white border-r border-gray-300 flex flex-col transform transition-transform duration-300 ease-in-out ${
-                isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-            }`}>
+            <Card className={`fixed lg:static inset-y-0 left-0 z-40 w-64 sm:w-72 bg-white border-r border-gray-300 flex flex-col transform transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+                }`}>
                 <div className="flex justify-center text-xl sm:text-2xl font-bold border-b border-gray-300 p-4">
                     Menu
                 </div>
@@ -49,7 +48,7 @@ export default function Menu() {
                     </Button>
                 </nav>
                 <div className="p-4 sm:p-6 border-t border-gray-300">
-                    <Button className="w-full p-4 sm:p-7 cursor-pointer text-sm sm:text-base" variant="destructive" onClick={() => {localStorage.removeItem("userEmail"); toast("You Logout!"); Navigate("/") }}>
+                    <Button className="w-full p-4 sm:p-7 cursor-pointer text-sm sm:text-base" variant="destructive" onClick={() => { localStorage.removeItem("userEmail"); toast("You Logout!"); Navigate("/") }}>
                         Logout
                     </Button>
                 </div>
@@ -68,11 +67,11 @@ export default function Menu() {
                 <div className="flex flex-col sm:flex-row justify-between gap-2 sm:gap-0 mb-4">
                     <h1 className="text-sm sm:text-base md:text-lg font-bold press-start-2p-regular break-all">{email}</h1>
                     <div className="flex items-center gap-2 sm:gap-3">
-                        <ConnectButton/>
+                        <ConnectButton />
                     </div>
                 </div>
                 <Separator />
-                <Outlet/>
+                <Outlet />
             </div>
         </div>
     );

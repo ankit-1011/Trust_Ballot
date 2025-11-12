@@ -15,7 +15,7 @@ const Candidate = () => {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // ✅ Upload image to Pinata via backend
+  // Upload image to Pinata via backend
   const uploadToPinata = async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
@@ -54,7 +54,7 @@ const Candidate = () => {
       );
       
       if (duplicateCandidate) {
-        toast("⚠️ A candidate with this name already exists!");
+        toast("A candidate with this name already exists!");
         setLoading(false);
         return;
       }
@@ -63,13 +63,13 @@ const Candidate = () => {
       toast("Uploading image to IPFS...");
       const imageUrl = await uploadToPinata(file);
 
-      // 2️⃣ Call smart contract
+      // Call smart contract
       toast("Registering candidate on blockchain...");
       const contract = await getContractSigner();
       const tx = await contract.addCandidate(name, imageUrl);
       await tx.wait();
 
-      toast("🎉 Candidate added successfully!");
+      toast(" Candidate added successfully!");
       console.log("Candidate Registered:", { name, imageUrl });
       setName("");
       setFile(null);
@@ -77,9 +77,9 @@ const Candidate = () => {
       console.error(err);
       const errorMessage = err.reason || err.message || "Registration failed!";
       if (errorMessage.includes("already exists") || errorMessage.includes("duplicate")) {
-        toast("⚠️ A candidate with this name already exists!");
+        toast(" A candidate with this name already exists!");
       } else {
-        toast(`❌ Error: ${errorMessage}`);
+        toast(` Error: ${errorMessage}`);
       }
     } finally {
       setLoading(false);

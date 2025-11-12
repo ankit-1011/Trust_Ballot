@@ -11,8 +11,6 @@ import { toast } from "@/components/ui/8bit/toast";
 import WalletConnect from "./WalletConnect";
 import { useAccount } from "wagmi";
 import { selfRegister, getVoter, isVoterRegistered } from "../Contracts/etherContracts";
-import axios from "axios";
-import { API_ENDPOINTS } from "../config/api";
 
 
 
@@ -23,7 +21,7 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const [voterData, setVoterData] = useState<any>(null);
 
-  // ✅ Load voter data when component mounts
+  //  Load voter data when component mounts
   useEffect(() => {
     const fetchVoter = async () => {
       if (isConnected && address) {
@@ -45,18 +43,12 @@ const Register = () => {
     fetchVoter();
   }, [isConnected, address]);
 
-  // 🔹 Upload Image to Pinata
-  const uploadToPinata = async (file: File) => {
-    const formData = new FormData();
-    formData.append("file", file);
+  //  Upload Image to Pinata
+  const getLocalPreviewUrl = (file: File) => {
+  return URL.createObjectURL(file);
+};
 
-   const res = await axios.post(API_ENDPOINTS.UPLOAD, formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
 
-    const ipfsHash = res.data.IpfsHash;
-    return `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
-  };
 
   //  Handle Register
   const handleRegister = async (e: React.FormEvent) => {
@@ -68,7 +60,7 @@ const Register = () => {
 
     // Check if already registered
     if (voterData && voterData.isRegistered) {
-      toast("⚠️ You are already registered as a voter!");
+      toast("You are already registered as a voter!");
       return;
     }
 
@@ -79,7 +71,7 @@ const Register = () => {
       if (address) {
         const isRegistered = await isVoterRegistered(address);
         if (isRegistered) {
-          toast("⚠️ You are already registered as a voter!");
+          toast(" You are already registered as a voter!");
           setLoading(false);
           // Refresh voter data
           const voter = await getVoter(address);
@@ -88,13 +80,14 @@ const Register = () => {
         }
       }
 
-      toast("Uploading image to IPFS...");
-      const imageUrl = await uploadToPinata(image);
+      toast("Generating local preview...");
+const imageUrl = getLocalPreviewUrl(image);
+
 
       toast("Registering on blockchain...");
       await selfRegister(name, imageUrl);
 
-      toast("✅ Registered successfully!");
+      toast("Registered successfully!");
 
       // Fetch voter details again after register
       const voter = await getVoter(address!);
@@ -106,14 +99,14 @@ const Register = () => {
       console.error(error);
       const errorMessage = error.reason || error.message || "Registration failed!";
       if (errorMessage.includes("already registered") || errorMessage.includes("Already registered")) {
-        toast("⚠️ You are already registered as a voter!");
+        toast(" You are already registered as a voter!");
         // Refresh voter data
         if (address) {
           const voter = await getVoter(address);
           setVoterData(voter);
         }
       } else {
-        toast(`❌ ${errorMessage}`);
+        toast(` ${errorMessage}`);
       }
     } finally {
       setLoading(false);

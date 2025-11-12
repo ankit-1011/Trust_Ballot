@@ -1,9 +1,9 @@
 "use client";
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import WalletConnect from "./WalletConnect";
 import { useAccount } from "wagmi";
 import { SquareArrowOutUpRight } from "lucide-react";
-import {  getAllCandidates, getContractSigner } from "../Contracts/etherContracts";
+import { getAllCandidates, getContractSigner } from "../Contracts/etherContracts";
 import { toast } from "@/components/ui/8bit/toast";
 
 const Dashboard = () => {
@@ -32,14 +32,14 @@ const Dashboard = () => {
       const contract = await getContractSigner();
       const tx = await contract.vote(id);
       await tx.wait();
-      toast(`✅ Successfully voted for candidate #${id}`);
-      
+      toast(`Successfully voted for candidate #${id}`);
+
       // Refresh candidates list to update vote counts
       const updatedList = await getAllCandidates();
       setCandidates(updatedList);
     } catch (err: any) {
       console.error(err);
-      toast(`❌ Error: ${err.reason || err.message}`);
+      toast(` Error: ${err.reason || err.message}`);
     } finally {
       setLoading(false);
     }
@@ -61,7 +61,7 @@ const Dashboard = () => {
               className="w-full sm:w-56 md:w-60 h-auto sm:h-auto border-3 border-black rounded-lg border-r-4 sm:border-r-8 border-b-4 sm:border-b-8 hover:-translate-y-1 duration-200 bg-white"
             >
               <SquareArrowOutUpRight className='hover:translate-y-0.5 duration-100 cursor-pointer m-2' />
-          
+
               <div className="w-full sm:w-50 h-40 sm:h-30 m-2 sm:ml-4 border-2 border-black rounded-lg">
                 <img
                   src={c.meta || "https://8bitcn.com/images/pixelized-8bitcnorc.jpg"}
@@ -69,12 +69,12 @@ const Dashboard = () => {
                   className="w-full h-full object-cover rounded"
                 />
               </div>
-              
+
               {/* Candidate Name */}
               <div className="px-2 sm:px-3 mt-2 mb-1">
                 <p className="text-sm sm:text-base font-bold press-start-2p-regular text-center">{c.name}</p>
               </div>
-              
+
               {/* Votes Count */}
               <div className="px-2 sm:px-3 mb-2">
                 <div className="border-2 border-black rounded-sm p-1 sm:p-2 bg-blue-50">
@@ -83,12 +83,11 @@ const Dashboard = () => {
                   </p>
                 </div>
               </div>
-              
+
               <div
                 onClick={() => handleVote(c.id)}
-                className={`w-full sm:w-27 h-8 bg-amber-200  sm:ml-3 sm:mb-1 text-center leading-8 border-3 border-black border-r-3 sm:border-r-5 border-b-3 sm:border-b-5 rounded-sm press-start-2p-regular text-xs sm:text-sm cursor-pointer ${
-                  loading ? "bg-gray-400" : "active:bg-violet-400"
-                } transition-colors duration-200`}
+                className={`w-full sm:w-27 h-8 bg-amber-200  sm:ml-3 sm:mb-1 text-center leading-8 border-3 border-black border-r-3 sm:border-r-5 border-b-3 sm:border-b-5 rounded-sm press-start-2p-regular text-xs sm:text-sm cursor-pointer ${loading ? "bg-gray-400" : "active:bg-violet-400"
+                  } transition-colors duration-200`}
               >
                 {loading ? "Voting" : "Vote"}
               </div>

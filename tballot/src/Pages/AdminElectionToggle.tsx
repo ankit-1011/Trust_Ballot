@@ -10,15 +10,16 @@ const AdminElectionToggle = () => {
   const { isConnected } = useAccount();
   const [loading, setLoading] = useState(false);
   const [electionState, setElectionState] = useState<"CREATED" | "ONGOING" | "ENDED">("CREATED");
-  const [winner, setWinner] = useState<{ id: string; name: string; votes: string } | null>(null);
+  const [winner, setWinner] = useState<{ id: string; name: string; votes: string , status:string } | null>(null);
 
-  // ✅ Fetch current election state from contract
+  // Fetch current election state from contract
   useEffect(() => {
     const fetchState = async () => {
       if (!isConnected) return;
       try {
         const contract = getContractProvider();
         const state = await contract.state(); // returns 0,1,2
+        console.log(state)
         const mapping: ("CREATED" | "ONGOING" | "ENDED")[] = ["CREATED", "ONGOING", "ENDED"];
         setElectionState(mapping[state]);
 
@@ -26,7 +27,6 @@ const AdminElectionToggle = () => {
         if (mapping[state] === "ENDED") {
           try {
             const w = await getWinner();
-            console.log(w)
             setWinner(w);
           } catch (err) {
             console.error("Error fetching winner:", err);
@@ -48,7 +48,7 @@ const AdminElectionToggle = () => {
 
   if (!isConnected) return <WalletConnect />;
 
-  const handleToggle = async () => {
+const handleToggle = async () => {
     try {
       setLoading(true);
       if (electionState === "CREATED") {
@@ -90,6 +90,7 @@ const AdminElectionToggle = () => {
     }
   };
 
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6">
       <div className="w-full max-w-md space-y-6">
@@ -102,8 +103,8 @@ const AdminElectionToggle = () => {
           <div className="text-center mb-4">
             <p className="text-sm sm:text-base font-semibold mb-2">Current State:</p>
             <div className={`inline-block px-4 py-2 rounded ${electionState === "CREATED" ? "bg-yellow-100 text-yellow-800" :
-                electionState === "ONGOING" ? "bg-green-100 text-green-800" :
-                  "bg-gray-100 text-gray-800"
+              electionState === "ONGOING" ? "bg-green-100 text-green-800" :
+                "bg-gray-100 text-gray-800"
               }`}>
               <span className="font-bold">{electionState}</span>
             </div>
@@ -113,8 +114,8 @@ const AdminElectionToggle = () => {
             onClick={handleToggle}
             disabled={loading}
             className={`w-full p-4 sm:p-6 text-base sm:text-lg ${electionState === "CREATED" ? "bg-green-600 hover:bg-green-700" :
-                electionState === "ONGOING" ? "bg-red-600 hover:bg-red-700" :
-                  "bg-blue-600 hover:bg-blue-700"
+              electionState === "ONGOING" ? "bg-red-600 hover:bg-red-700" :
+                "bg-blue-600 hover:bg-blue-700"
               } text-white font-semibold rounded transition-colors`}
           >
             {loading ? "Processing..." :
@@ -130,6 +131,7 @@ const AdminElectionToggle = () => {
             <div className="space-y-2">
               <p className="text-base sm:text-lg"><span className="font-semibold">Name:</span> {winner.name}</p>
               <p className="text-base sm:text-lg"><span className="font-semibold">Votes:</span> {winner.votes}</p>
+              <p className="text-base sm:text-lg"><span className="font-semibold">Votes:</span> {winner.status}</p>
             </div>
           </div>
         )}

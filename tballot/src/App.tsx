@@ -11,9 +11,9 @@ import Candidate from "./Pages/Candidate"
 import Voter from "./Pages/Voter"
 import "@rainbow-me/rainbowkit/styles.css";
 import { WagmiProvider } from "wagmi";
-import { RainbowKitProvider ,darkTheme } from "@rainbow-me/rainbowkit";
+import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {config } from "../WalletConfig";
+import { config } from "../WalletConfig";
 import AdminElectionToggle from "./Pages/AdminElectionToggle"
 
 
@@ -23,7 +23,7 @@ const App = () => {
     <>
       <WagmiProvider config={config}>
         <QueryClientProvider client={queryClient}>
-          <RainbowKitProvider  theme={darkTheme()}>
+          <RainbowKitProvider theme={darkTheme()}>
             <Cursor />
             <Routes >
               <Route path="/" element={<Home />} />

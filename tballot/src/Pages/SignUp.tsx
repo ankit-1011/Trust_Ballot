@@ -70,7 +70,7 @@ const SignUp = () => {
     }
 
     return (
-        <div className="flex justify-center items-center min-h-screen p-4" style={{ backgroundImage: `url(${bg})`, backgroundSize: 'cover', backgroundPosition: 'center'}}>
+        <div className="flex justify-center items-center min-h-screen p-4" style={{ backgroundImage: `url(${bg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
             {Loading ? <div className="flex justify-center items-center h-40 ">
                 <ScatterBoxLoader
                     primaryColor={"#6366F1"}

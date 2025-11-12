@@ -153,8 +153,8 @@ export const getCandidatesCount = async () => {
 //  Get winner (after election ended)
 export const getWinner = async () => {
   const contract = getContractProvider();
-  const [id, name, votes] = await contract.getWinner();
-  return { id, name, votes: votes.toString() };
+  const [id, name, votes ,status] = await contract.getWinner();
+  return { id, name, votes: votes.toString(),status };
 };
 
 //  Get voter details
