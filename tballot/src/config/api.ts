@@ -8,7 +8,6 @@ export const API_ENDPOINTS = {
   BASE_URL: API_BASE_URL,
   SIGNUP: `${API_BASE_URL}/signup`,
   LOGIN: `${API_BASE_URL}/login`,
-  UPLOAD: `${API_BASE_URL}/api/upload`,
 };
 
 export default API_ENDPOINTS;

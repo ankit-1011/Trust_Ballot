@@ -7,7 +7,6 @@ import dotenv from 'dotenv';
 import SignUp from "./models/SignUp.js";
 import sendLoginMail from './controllers/loginMail.js';
 import signUpMail from './controllers/signUpMail.js';
-import pinataUpload from "./routes/PintaUpload.js";
 dotenv.config();
 
 
@@ -21,7 +20,7 @@ app.use(cors({
   origin: [
     "http://localhost:5173",
     "http://localhost:5174",
-    "https://trust-ballot-hlez.vercel.app"
+    "https://trust-ballot.vercel.app"
   ],
   credentials: true
 }));
@@ -47,9 +46,6 @@ app.get('/', (req, res) => {
   res.send("Express is running");
 });
 
-
-
-app.use("/api", pinataUpload);
 
 app.post('/signup', async (req,res)=>{
 try{

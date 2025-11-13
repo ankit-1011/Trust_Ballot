@@ -7,13 +7,13 @@ import dotenv from 'dotenv';
 import SignUp from "./models/SignUp.js";
 import sendLoginMail from './controllers/loginMail.js';
 import signUpMail from './controllers/signUpMail.js';
-import pinataUpload from "./routes/PintaUpload.js";
+
 dotenv.config();
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 const PORT = 3000;
 const JWT_SECRET = process.env.JWT_SECRET;
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(cors({ origin: ["http://localhost:5173","https://trust-ballot.vercel.app"], credentials: true }));
 app.use(express.json());
 const mongoURI = process.env.MONGO_URI;
 mongoose.connect(mongoURI)
@@ -26,7 +26,7 @@ mongoose.connect(mongoURI)
 app.get('/', (req, res) => {
     res.send("Express is running");
 });
-app.use("/api", pinataUpload);
+
 app.post('/signup', async (req, res) => {
     try {
         const { name, email, password } = req.body;
