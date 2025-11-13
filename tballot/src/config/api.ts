@@ -2,7 +2,7 @@
 // For local development, use: http://localhost:3000
 // For production, use: https://trust-ballot.onrender.com
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 export const API_ENDPOINTS = {
   BASE_URL: API_BASE_URL,
