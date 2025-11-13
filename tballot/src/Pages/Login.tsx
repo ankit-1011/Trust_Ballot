@@ -77,7 +77,7 @@ const Login = () => {
                         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                             <div className="flex flex-col sm:flex-row sm:justify-center sm:items-center gap-2 sm:gap-4">
                                 <Label className="text-sm sm:text-base font-bold sm:w-3xs">Email</Label>
-                                <Input name="email" type="email" placeholder="enter ur email" required value={formData.email} onChange={handleChange}  className="w-full sm:w-[450px]" autoComplete="email"/>
+                                <Input name="email" type="email" placeholder="enter ur email" required value={formData.email} onChange={handleChange}  className="w-full sm:w-[450px]" />
                             </div>
 
                             <div className="flex flex-col sm:flex-row sm:justify-center sm:items-center gap-2 sm:gap-4">
