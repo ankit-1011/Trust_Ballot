@@ -6,32 +6,20 @@ import { useAccount } from "wagmi";
 import { Button } from "@/components/ui/8bit/button";
 import { toast } from "@/components/ui/8bit/toast";
 import { getContractSigner, getAllCandidates } from "../Contracts/etherContracts";
-import axios from "axios";
-import { API_ENDPOINTS } from "../config/api";
+import { PinataSDK } from "pinata";
 
 const Candidate = () => {
   const { isConnected } = useAccount();
   const [name, setName] = useState("");
-  const [file, setFile] = useState<File | null>(null);
+  const [image, setImage] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Upload image to Pinata via backend
-  const uploadToPinata = async (file: File) => {
-    const formData = new FormData();
-    formData.append("file", file);
+  // Upload image to Pinata 
+  const pinata = new PinataSDK({
+      pinataJwt: import.meta.env.VITE_PINATA_JWT,
+      pinataGateway: import.meta.env.VITE_GATEWAY_URL,
+    });
 
-    try {
-      const res = await axios.post(API_ENDPOINTS.UPLOAD, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-
-      const ipfsHash = res.data.IpfsHash;
-      return `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
-    } catch (error) {
-      console.error("Pinata upload failed:", error);
-      throw new Error("Image upload failed");
-    }
-  };
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,7 +27,7 @@ const Candidate = () => {
       toast("Please enter candidate name");
       return;
     }
-    if (!file) {
+    if (!image) {
       toast("Please upload candidate image");
       return;
     }
@@ -59,9 +47,16 @@ const Candidate = () => {
         return;
       }
 
-      // 1️⃣ Upload image to Pinata
-      toast("Uploading image to IPFS...");
-      const imageUrl = await uploadToPinata(file);
+    toast("Uploading image to IPFS...");
+      const upload = await pinata.upload.public.file(image);
+      if (!upload.cid) {
+        toast("Image upload failed!");
+        setLoading(false);
+        return;
+      }
+
+      const imageUrl = await pinata.gateways.public.convert(upload.cid);
+     
 
       // Call smart contract
       toast("Registering candidate on blockchain...");
@@ -70,9 +65,8 @@ const Candidate = () => {
       await tx.wait();
 
       toast(" Candidate added successfully!");
-      console.log("Candidate Registered:", { name, imageUrl });
       setName("");
-      setFile(null);
+      setImage(null);
     } catch (err: any) {
       console.error(err);
       const errorMessage = err.reason || err.message || "Registration failed!";
@@ -113,8 +107,8 @@ const Candidate = () => {
               <input
                 type="file"
                 accept="image/*"
-                className="flex-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
-                onChange={(e) => setFile(e.target.files?.[0] || null)}
+                className="flex-1 p-2   text-sm sm:text-base w-25"
+                onChange={(e) => setImage(e.target.files?.[0] || null)}
               />
             </div>
 

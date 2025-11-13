@@ -17,7 +17,6 @@ const Dashboard = () => {
       try {
         const list = await getAllCandidates();
         setCandidates(list);
-        console.log("Candidates fetched:", list);
       } catch (err) {
         console.error(err);
       }
@@ -66,7 +65,7 @@ const Dashboard = () => {
                 <img
                   src={c.meta || "https://8bitcn.com/images/pixelized-8bitcnorc.jpg"}
                   alt={c.name}
-                  className="w-full h-full object-cover rounded"
+                  className="w-full h-full  rounded"
                 />
               </div>
 
