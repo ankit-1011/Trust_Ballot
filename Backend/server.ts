@@ -18,8 +18,6 @@ const JWT_SECRET =process.env.JWT_SECRET;
 
 app.use(cors({
   origin: [
-    "http://localhost:5173",
-    "http://localhost:5174",
     "https://trust-ballot.vercel.app"
   ],
   credentials: true
