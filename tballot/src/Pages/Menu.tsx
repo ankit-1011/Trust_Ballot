@@ -65,8 +65,10 @@ export default function Menu() {
             {/* Main Content */}
             <div className="flex-1 p-2 sm:p-4 lg:ml-0">
                 <div className="flex flex-col sm:flex-row justify-between gap-2 sm:gap-0 mb-4">
-                    <h1 className="text-sm sm:text-base md:text-lg font-bold press-start-2p-regular break-all">{email}</h1>
-                    <div className="flex items-center gap-2 sm:gap-3">
+                    <h1 className="hidden md:block font-bold press-start-2p-regular break-all">
+                        {email}
+                    </h1>
+                    <div className="flex  justify-end ">
                         <ConnectButton />
                     </div>
                 </div>

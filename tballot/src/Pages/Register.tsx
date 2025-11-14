@@ -105,7 +105,7 @@ const Register = () => {
   if (!isConnected) return <WalletConnect />;
 
   return (
-    <div className="flex items-center justify-center bg-gray-100 mt-4 sm:mt-10 md:mt-20 p-4">
+    <div className="flex items-center justify-center w-90 sm:w-full bg-gray-100 mt-4 sm:mt-10 md:mt-20 p-4">
       <Card className="w-full max-w-[550px] shadow-lg-blue transition-all duration-300">
         <CardHeader className="text-center">
           <CardTitle className="text-lg sm:text-xl md:text-2xl">🗳️ Voter Registration</CardTitle>

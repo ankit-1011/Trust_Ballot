@@ -96,7 +96,7 @@ const Home = () => {
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 1.2 }}
-                className="flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-4 sm:gap-6 md:gap-10 m-4 sm:m-6 bottom-4 w-full z-10 pb-4"
+                className="flex gap-25 sm:flex  sm:gap-230 m-4 z-10"
             >
                 <div>
                     <Button

@@ -82,7 +82,7 @@ const Login = () => {
 
                             <div className="flex flex-col sm:flex-row sm:justify-center sm:items-center gap-2 sm:gap-4">
                                 <Label className="text-sm sm:text-base font-bold sm:w-3xs">Password</Label>
-                                <Input name="password" type="password" placeholder="enter ur password" required value={formData.password} onChange={handleChange} className="w-full sm:w-[450px]" autoComplete="current-password"/>
+                                <Input name="password" type="password" placeholder="enter ur password" required value={formData.password} onChange={handleChange} className="w-full sm:w-[450px]"/>
                             </div>
 
                             <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 pt-2">
