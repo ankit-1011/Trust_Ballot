@@ -13,10 +13,7 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 const PORT = 3000;
 const JWT_SECRET = process.env.JWT_SECRET;
-app.use(cors({
-  origin: process.env.DOMAIN_URL,
-  credentials: true
-}));
+app.use(cors());
 app.use(express.json());
 const mongoURI = process.env.MONGO_URI;
 mongoose.connect(mongoURI)
