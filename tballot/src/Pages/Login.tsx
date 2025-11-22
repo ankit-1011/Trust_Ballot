@@ -8,6 +8,7 @@ import { toast } from "@/components/ui/8bit/toast"
 import { ScatterBoxLoader } from "react-awesome-loaders"
 import bg from "../assets/background.jpg";
 import { API_ENDPOINTS } from "../config/api";
+import { useAuth } from "@/lib/AuthProvider"
 
 interface LoginForm {
     email: string,
@@ -29,6 +30,7 @@ const Login = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value })
     }
 
+    const {setUser} = useAuth()
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -41,6 +43,7 @@ const Login = () => {
             const data = await res.json();
             if (res.ok) {
                 toast(data.message || "Login Successful ");
+                setUser(true);
                 localStorage.setItem("userEmail",formData.email)
                 setFormData({ email: "", password: "" })
                 

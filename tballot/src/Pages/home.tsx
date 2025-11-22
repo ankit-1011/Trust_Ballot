@@ -22,7 +22,7 @@ const Home = () => {
     }, []);
 
     return (
-        <div className="min-h-screen w-full bg-black relative">
+        <div className="overflow-hidden w-full bg-black relative">
             <div className="relative z-10 w-15 h-3 ml-2 sm:ml-5 mt-2 sm:mt-0">
                 <div className="flex items-center gap-1 sm:gap-2">
                     <img src={etherium} className="w-6 h-6 sm:w-8 sm:h-8 ml-2 sm:ml-9" />

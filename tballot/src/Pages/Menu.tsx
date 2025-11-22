@@ -43,7 +43,7 @@ export default function Menu() {
                     <Button variant="ghost" className="w-full justify-start gap-2 sm:gap-3 text-sm sm:text-base" onClick={() => { Navigate("/menu/register"); setIsMobileMenuOpen(false); }}>
                         <Boxes size={20} />v-Register
                     </Button>
-                    <Button variant="ghost" className="w-full justify-start gap-2 sm:gap-3 text-sm sm:text-base" onClick={() => { Navigate("/toggle"); setIsMobileMenuOpen(false); }}>
+                    <Button variant="ghost" className="w-full justify-start gap-2 sm:gap-3 text-sm sm:text-base" onClick={() => { Navigate("/menu/toggle"); setIsMobileMenuOpen(false); }}>
                         <ToggleLeft size={20} />Toggle Election
                     </Button>
                 </nav>

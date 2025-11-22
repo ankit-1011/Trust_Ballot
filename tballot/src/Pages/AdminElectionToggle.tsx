@@ -46,7 +46,9 @@ const AdminElectionToggle = () => {
   }, [isConnected]);
 
 
-  if (!isConnected) return <WalletConnect />;
+  if (!isConnected) {
+    return <WalletConnect/>
+  }
 
 const handleToggle = async () => {
     try {
