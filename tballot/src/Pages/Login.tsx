@@ -30,7 +30,7 @@ const Login = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value })
     }
 
-    const {setUser} = useAuth()
+    const { setUser } = useAuth()
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -42,14 +42,14 @@ const Login = () => {
             })
             const data = await res.json();
             if (res.ok) {
+                 setTimeout(()=>{
+                    setLoading(false);
+                    navigate("/menu", { state: { email: formData.email } });
+                },3000)
                 toast(data.message || "Login Successful ");
                 setUser(true);
-                localStorage.setItem("userEmail",formData.email)
+                localStorage.setItem("userEmail", formData.email)
                 setFormData({ email: "", password: "" })
-                
-                    setLoading(false);
-                    navigate("/menu",{state:{email:formData.email}});
-               
             } else {
                 setLoading(false);
                 toast("Login Failed");
@@ -65,27 +65,24 @@ const Login = () => {
 
 
     return (
-        <div className="flex justify-center items-center min-h-screen p-4" style={{backgroundImage:`url(${bg})`, backgroundSize: 'cover', backgroundPosition: 'center'}}>
+        <div className="flex justify-center items-center min-h-screen p-4" style={Loading ? {} :{ backgroundImage: `url(${bg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
             {Loading ? <div className="flex justify-center items-center h-40 ">
-                <ScatterBoxLoader
-                    primaryColor={"#6366F1"}
-                    secondaryColor={"#E0E7FF"}
-                />
+                <ScatterBoxLoader style={{background:'none'}}/>
             </div> :
                 <Card className="w-full max-w-[490px] mx-auto">
                     <CardHeader className="flex justify-center items-center">
                         <Label className="font-bold text-lg sm:text-xl">Login Account</Label>
                     </CardHeader>
                     <CardContent className="flex flex-col gap-4">
-                        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                        <form onSubmit={handleSubmit} className="flex flex-col gap-4" autoComplete="off">
                             <div className="flex flex-col sm:flex-row sm:justify-center sm:items-center gap-2 sm:gap-4">
                                 <Label className="text-sm sm:text-base font-bold sm:w-3xs">Email</Label>
-                                <Input name="email" type="email" placeholder="enter ur email" required value={formData.email} onChange={handleChange}  className="w-full sm:w-[450px]" />
+                                <Input name="email" type="email" placeholder="enter ur email" autoComplete="new-email" required value={formData.email} onChange={handleChange} className="w-full sm:w-[450px]" />
                             </div>
 
                             <div className="flex flex-col sm:flex-row sm:justify-center sm:items-center gap-2 sm:gap-4">
                                 <Label className="text-sm sm:text-base font-bold sm:w-3xs">Password</Label>
-                                <Input name="password" type="password" placeholder="enter ur password" required value={formData.password} onChange={handleChange} className="w-full sm:w-[450px]"/>
+                                <Input name="password" type="password" placeholder="enter ur password" required value={formData.password} onChange={handleChange} className="w-full sm:w-[450px]" />
                             </div>
 
                             <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 pt-2">

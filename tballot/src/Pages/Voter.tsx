@@ -45,7 +45,7 @@ const VoterList = () => {
   if (!isConnected) return <WalletConnect />;
 
   return (
-    <div className="flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-8 p-4 sm:p-6 md:p-10 bg-gray-100 min-h-screen">
+    <div className="flex flex-wrap fixed  justify-center gap-4 sm:gap-6 md:gap-8 p-4 sm:p-6 md:p-10 bg-gray-100 min-h-screen">
       {loading ? (
         <div className="text-base sm:text-lg font-semibold">Loading voters...</div>
       ) : voters.length === 0 ? (

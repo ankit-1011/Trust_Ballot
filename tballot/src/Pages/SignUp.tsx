@@ -55,7 +55,7 @@ const SignUp = () => {
                     setLoading(false);
                     navigate("/menu");
                 }
-                    , 1000)
+                    , 3000)
             } else {
                 // Handle error response
                 toast(data.message || "Error during sign up");
@@ -70,12 +70,9 @@ const SignUp = () => {
     }
 
     return (
-        <div className="flex justify-center items-center min-h-screen p-4" style={{ backgroundImage: `url(${bg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+        <div className="flex justify-center items-center min-h-screen p-4" style={Loading ? {} :{ backgroundImage: `url(${bg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
             {Loading ? <div className="flex justify-center items-center h-40 ">
-                <ScatterBoxLoader
-                    primaryColor={"#6366F1"}
-                    secondaryColor={"#E0E7FF"}
-                />
+                <ScatterBoxLoader/>
             </div> : <Card className="w-full max-w-[490px] mx-auto">
                 <CardHeader>
                     <Label className="text-xl sm:text-2xl font-semibold flex justify-center items-center">

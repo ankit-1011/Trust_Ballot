@@ -47,7 +47,7 @@ const Dashboard = () => {
   if (!isConnected) return <WalletConnect />;
 
   return (
-    <div className="flex flex-col items-center mt-4 sm:mt-6 md:mt-10 p-2 sm:p-4">
+    <div className="flex flex-col items-center fixed mt-4 sm:mt-6 md:mt-10 p-2 sm:p-4">
 
       {/* Candidate Cards */}
       <div className="flex flex-wrap gap-3 sm:gap-4 md:gap-6 justify-center w-full">
