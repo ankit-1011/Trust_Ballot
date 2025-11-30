@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import etherium from "../assets/etherium.png";
+import img from '../assets/Screenshot 2025-11-30 215406.png'
 
 
 const Home = () => {
@@ -42,7 +43,7 @@ const Home = () => {
             />
 
             {/* Content */}
-            <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4">
+            <div className="relative z-10 flex flex-col items-center justify-center min-h-screen ">
                 <div className="flex flex-col items-center justify-center">
                     <motion.h1
                         initial={{ opacity: 0, y: -50 }}
@@ -86,10 +87,30 @@ const Home = () => {
                     className="mt-6 sm:mt-10"
                 >
                     <Button variant="outline" onClick={() => navigate("./login")} className="cursor-pointer text-sm sm:text-base">Let's Get Started</Button>
+                    <div className=" w-60 left-240 absolute animate-wiggle top-[320px]">
+                        <img src='https://res.cloudinary.com/de8pcmlyg/image/upload/v1764524060/blockchain-9242492-7517065-removebg-preview_sgdtrn.png' />
+                    </div>
                 </motion.div>
             </div>
 
 
+
+
+
+
+            <div className="relative z-10 flex justify-center mb-5 mx-auto w-[1100px] px-2">
+                <video
+                    controls
+                    poster="https://res.cloudinary.com/de8pcmlyg/image/upload/v1764502040/vedio_image_mq44vy.png"
+                    className="w-full aspect-video rounded-lg shadow-lg"
+                >
+                    <source src="https://res.cloudinary.com/de8pcmlyg/video/upload/v1764498755/trustballot_demo_stxx8e.mp4" type="video/mp4" />
+                </video>
+
+                <div className="absolute left-5 sm:w-56 md:w-64 h-64 rounded-lg  p-3 text-center shadow-md top-[-130px] rotate-14 animate-wiggle">
+                    <img src={img} className="object-cover w-full h-full rounded-lg" />
+                </div>
+            </div>
 
             {/* Footer buttons */}
             <motion.div

@@ -111,17 +111,23 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-}
+
 
 .press-start-2p-regular {
   font-family: "Press Start 2P", system-ui;
   font-weight: 400;
   font-style: normal;
 }
+
+
+
+@keyframes wiggle {
+  0%, 100% { transform: translateY(-7px); }
+  50% { transform: translateY(7px); }
+}
+
+.animate-wiggle {
+  animation: wiggle 3s ease-in-out infinite;
+}
+
+

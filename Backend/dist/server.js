@@ -26,7 +26,6 @@ mongoose.connect(mongoURI)
 app.get('/', (req, res) => {
     res.send("Express is running");
 });
-
 app.post('/signup', async (req, res) => {
     try {
         const { name, email, password } = req.body;
