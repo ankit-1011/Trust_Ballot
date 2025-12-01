@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import etherium from "../assets/etherium.png";
-import img from '../assets/Screenshot 2025-11-30 215406.png'
+import img from '../assets/eth_global.png'
 
 
 const Home = () => {
