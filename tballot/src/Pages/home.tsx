@@ -84,11 +84,11 @@ const Home = () => {
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.6, delay: 1 }}
-                    className="mt-6 sm:mt-10"
+                    className="mt-6 sm:mt-10 relative"
                 >
                     <Button variant="outline" onClick={() => navigate("./login")} className="cursor-pointer text-sm sm:text-base">Let's Get Started</Button>
-                    <div className=" w-60 left-240 absolute animate-wiggle top-[320px]">
-                        <img src='https://res.cloudinary.com/de8pcmlyg/image/upload/v1764524060/blockchain-9242492-7517065-removebg-preview_sgdtrn.png' />
+                    <div className="hidden md:block w-40 md:w-60 left-0 md:left-64 absolute animate-wiggle top-[200px] md:top-[320px]">
+                        <img src='https://res.cloudinary.com/de8pcmlyg/image/upload/v1764524060/blockchain-9242492-7517065-removebg-preview_sgdtrn.png' alt="blockchain" className="w-full h-auto" />
                     </div>
                 </motion.div>
             </div>
@@ -98,7 +98,7 @@ const Home = () => {
 
 
 
-            <div className="relative z-10 flex justify-center mb-5 mx-auto w-[1100px] px-2">
+            <div className="relative z-10 flex justify-center mb-5 mx-auto w-full max-w-[1100px] px-2 sm:px-4">
                 <video
                     controls
                     poster="https://res.cloudinary.com/de8pcmlyg/image/upload/v1764502040/vedio_image_mq44vy.png"
@@ -107,8 +107,8 @@ const Home = () => {
                     <source src="https://res.cloudinary.com/de8pcmlyg/video/upload/v1764498755/trustballot_demo_stxx8e.mp4" type="video/mp4" />
                 </video>
 
-                <div className="absolute left-5 sm:w-56 md:w-64 h-64 rounded-lg  p-3 text-center shadow-md top-[-130px] rotate-14 animate-wiggle">
-                    <img src={img} className="object-cover w-full h-full rounded-lg" />
+                <div className="hidden sm:block absolute left-2 sm:left-5 w-32 sm:w-40 md:w-56 lg:w-64 h-32 sm:h-40 md:h-56 lg:h-64 rounded-lg p-2 sm:p-3 text-center shadow-md top-[-80px] sm:top-[-100px] md:top-[-130px] rotate-12 sm:rotate-14 animate-wiggle">
+                    <img src={img} alt="eth global" className="object-cover w-full h-full rounded-lg" />
                 </div>
             </div>
 
@@ -117,7 +117,7 @@ const Home = () => {
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 1.2 }}
-                className="flex gap-25 sm:flex  sm:gap-230 m-4 z-10"
+                className="flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-4 sm:gap-6 md:gap-10 m-4 sm:m-6 z-10 pb-4"
             >
                 <div>
                     <Button

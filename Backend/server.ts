@@ -7,6 +7,7 @@ import dotenv from 'dotenv';
 import SignUp from "./models/SignUp.js";
 import sendLoginMail from './controllers/loginMail.js';
 import signUpMail from './controllers/signUpMail.js';
+import pinataUpload from "./routes/PintaUpload.js";
 dotenv.config();
 
 
@@ -38,6 +39,9 @@ mongoose.connect(mongoURI as string)
 app.get('/', (req, res) => {
   res.send("Express is running");
 });
+
+// Pinata upload route
+app.use("/api", pinataUpload);
 
 
 app.post('/signup', async (req,res)=>{

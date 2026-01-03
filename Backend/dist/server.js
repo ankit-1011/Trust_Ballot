@@ -18,11 +18,11 @@ app.use(express.json());
 const mongoURI = process.env.MONGO_URI;
 mongoose.connect(mongoURI)
     .then(() => {
-    console.log("MongoDB connected");
-})
+        console.log("MongoDB connected");
+    })
     .catch((err) => {
-    console.log("MongoDB connection error:", err);
-});
+        console.log("MongoDB connection error:", err);
+    });
 app.get('/', (req, res) => {
     res.send("Express is running");
 });

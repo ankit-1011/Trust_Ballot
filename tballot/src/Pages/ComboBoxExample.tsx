@@ -36,18 +36,18 @@ export function ComboBoxExample() {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-auto px-10 bg-green-400"
+          className="w-full sm:w-auto px-4 sm:px-10 bg-green-400 text-sm sm:text-base"
         >
           <div className="flex items-center gap-2">
             {value
               ? frameworks.find((f) => f.value === value)?.label
               : "Voting creation..."}
-            <ChevronsUpDown className="absolute right-4 size-4 shrink-0 opacity-50" />
+            <ChevronsUpDown className="absolute right-2 sm:right-4 size-4 shrink-0 opacity-50" />
           </div>
         </Button>
       </PopoverTrigger>
 
-      <PopoverContent className="w-auto md:w-[320px] p-0">
+      <PopoverContent className="w-[280px] sm:w-auto md:w-[320px] p-0">
         <Command>
           <CommandInput placeholder="Voting creation..." />
           <CommandList>

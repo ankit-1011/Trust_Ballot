@@ -3,7 +3,7 @@
 // Production: https://trust-ballot.onrender.com
 
 const API_BASE_URL =
-   "http://localhost:3000";
+  "http://localhost:3000";
 
 export const API_ENDPOINTS = {
   BASE_URL: API_BASE_URL,
