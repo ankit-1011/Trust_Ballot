@@ -86,7 +86,7 @@ const Home = () => {
                     transition={{ duration: 0.6, delay: 1 }}
                     className="mt-6 sm:mt-10 relative"
                 >
-                    <Button variant="outline" onClick={() => navigate("./login")} className="cursor-pointer text-sm sm:text-base">Let's Get Started</Button>
+                    <Button variant="outline" onClick={() => navigate("/menu/dashboard")} className="cursor-pointer text-sm sm:text-base">Let's Get Started</Button>
                     <div className="hidden md:block w-40 md:w-60 left-0 md:left-64 absolute animate-wiggle top-[200px] md:top-[320px]">
                         <img src='https://res.cloudinary.com/de8pcmlyg/image/upload/v1764524060/blockchain-9242492-7517065-removebg-preview_sgdtrn.png' alt="blockchain" className="w-full h-auto" />
                     </div>
