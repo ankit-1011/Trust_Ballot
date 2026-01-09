@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom"
+import { Route, Routes, Navigate } from "react-router-dom"
 import Home from "./Pages/home"
 import Register from "./Pages/Register"
 import { Toaster } from "sonner"
@@ -28,11 +28,12 @@ const App = () => {
             <Routes >
               <Route path="/" element={<Home />} />
               <Route path="/menu" element={<ProtectedLayout/>}>
+                <Route index element={<Navigate to="/menu/dashboard" replace />} />
                 <Route path="register" element={<Register />} />
-                <Route path={"dashboard"} element={<Dashboard />} />
-                <Route path={"candidate-list"} element={<Candidate />} />
-                <Route path={"voter-list"} element={<Voter />} />
-                <Route path={"toggle"} element={<AdminElectionToggle />} />
+                <Route path="dashboard" element={<Dashboard />} />
+                <Route path="candidate-list" element={<Candidate />} />
+                <Route path="voter-list" element={<Voter />} />
+                <Route path="toggle" element={<AdminElectionToggle />} />
               </Route>
             </Routes>
             <Toaster position="top-right" richColors closeButton />
