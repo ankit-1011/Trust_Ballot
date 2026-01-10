@@ -41,10 +41,17 @@
 - **Hardhat** - Development framework
 - **Ethers.js** - Contract interactions
 
-#### Future: Linera Microchains
-- **Rust** - Linera application (in progress)
-- **Real-time subscriptions** - Instant updates
-- **High throughput** - Microchains architecture
+#### Linera Microchains ⚡ (Active Development)
+- **Rust** - Linera application compiled to Wasm
+- **Real-time subscriptions** - Instant updates via WebSocket
+- **High throughput** - Microchains architecture (1000+ TPS)
+- **Low latency** - Sub-second transaction finality
+- **User-controlled chains** - Dedicated microchains per user/app
+- **Elastic validators** - Parallel transaction processing
+- **Zero-cost idle chains** - Efficient resource management
+- **Cross-chain messaging** - Asynchronous communication
+- **No mempool** - Direct block submission
+- **Ephemeral chains** - On-demand temporary chains
 
 ---
 
@@ -296,21 +303,43 @@ Visit: `http://localhost:5173`
 
 ---
 
+## 🚀 Linera Microchains Integration
+
+### Active Development
+TrustBallot is being enhanced with **Linera Microchains** for real-time, high-performance voting.
+
+**See [LINERA_FEATURES.md](./LINERA_FEATURES.md) for complete feature list**
+
+### Key Linera Benefits
+- ⚡ **Real-time Updates**: WebSocket subscriptions, no polling
+- 🚀 **High Throughput**: 1000+ TPS per microchain
+- 💰 **Lower Costs**: Efficient architecture, zero-cost idle chains
+- 📊 **Better Scalability**: Horizontal scaling, elastic validators
+- 🔄 **Sub-second Finality**: Milliseconds transaction confirmation
+- 🌐 **Cross-chain**: Asynchronous messaging, multi-chain apps
+- 🛠️ **Developer-friendly**: Rust/Wasm, JavaScript SDK
+
+### Real-time Features in TrustBallot
+- 📡 Live vote count updates
+- 🔔 Instant election state changes
+- 📈 Real-time candidate list
+- 🎯 Instant voter registration
+- ⚡ Immediate transaction feedback
+
+---
+
 ## 🔮 Future Enhancements
 
-### Linera Microchains Migration
-- ⚡ Real-time updates (no polling)
-- 🚀 High throughput
-- 💰 Lower costs
-- 📊 Better scalability
-
 ### Planned Features
-- 📈 Analytics dashboard
-- 🔔 Email notifications
-- 📱 Mobile app
+- 📈 Analytics dashboard with real-time charts
+- 🔔 Email notifications for election events
+- 📱 Mobile app (React Native)
 - 🌍 Multi-language support
-- 🎨 Custom themes
-- 📊 Advanced voting methods (ranked choice, etc.)
+- 🎨 Custom themes and branding
+- 📊 Advanced voting methods (ranked choice, approval voting)
+- 🔍 Real-time election auditing
+- 🌐 Multi-election support
+- 📡 Cross-chain election capabilities
 
 ---
 
@@ -356,7 +385,9 @@ MIT License - See LICENSE file
 - **Frontend**: https://trust-ballot-zujo.vercel.app
 - **Backend**: https://trust-ballot.onrender.com
 - **Documentation**: See README.md
+- **Linera Features**: See [LINERA_FEATURES.md](./LINERA_FEATURES.md)
 - **Migration Guide**: See LINERA_MIGRATION.md
+- **Migration Steps**: See MIGRATION_STEPS.md
 
 ---
 
