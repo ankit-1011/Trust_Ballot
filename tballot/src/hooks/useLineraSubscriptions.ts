@@ -260,16 +260,23 @@ export const useLeaderboardSubscription = () => {
         }
       }
       
-      // Load initial leaderboard data immediately
+      // Load initial leaderboard data immediately (with error handling)
       const loadLeaderboard = async () => {
         try {
           const initialLeaderboard = await getLeaderboard();
-          console.log("📊 Initial leaderboard loaded:", initialLeaderboard.length, "candidates");
-          if (initialLeaderboard && initialLeaderboard.length > 0) {
+          console.log("📊 Initial leaderboard loaded:", initialLeaderboard?.length || 0, "candidates");
+          if (initialLeaderboard && Array.isArray(initialLeaderboard) && initialLeaderboard.length > 0) {
             setLeaderboard(initialLeaderboard);
+          } else {
+            // Set empty array if no candidates (this is valid)
+            setLeaderboard([]);
           }
-        } catch (error) {
-          console.warn("Failed to load initial leaderboard:", error);
+        } catch (error: any) {
+          // Silently handle errors - wallet might not be connected
+          if (!error?.message?.includes("Unexpected error")) {
+            console.log("⏭️ Leaderboard will load when candidates are available");
+          }
+          setLeaderboard([]); // Set empty array on error
         }
       };
       
@@ -288,16 +295,20 @@ export const useLeaderboardSubscription = () => {
       }
       
       // Also refresh leaderboard periodically to catch new candidates (fallback)
+      // Only refresh if we don't have candidates yet, or every 10 seconds (less frequent)
       refreshIntervalId = setInterval(async () => {
         try {
           const lb = await getLeaderboard();
-          if (lb && lb.length > 0) {
+          if (lb && Array.isArray(lb)) {
             setLeaderboard(lb);
           }
-        } catch (err) {
-          console.warn("Periodic leaderboard refresh failed:", err);
+        } catch (err: any) {
+          // Silently fail - expected when wallet is not connected
+          if (!err?.message?.includes("Unexpected error")) {
+            // Only log non-wallet errors
+          }
         }
-      }, 5000); // Refresh every 5 seconds
+      }, 10000); // Refresh every 10 seconds (less frequent to avoid wallet spam)
     };
     
     checkAndSubscribe();

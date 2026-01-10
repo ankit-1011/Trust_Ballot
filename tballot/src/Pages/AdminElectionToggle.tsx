@@ -12,7 +12,7 @@ import WalletConnect from "./WalletConnect";
 import { useAccount } from "wagmi";
 
 const AdminElectionToggle = () => {
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
   const [loading, setLoading] = useState(false);
   const [electionState, setElectionState] = useState<
     "CREATED" | "ONGOING" | "ENDED"
@@ -24,13 +24,94 @@ const AdminElectionToggle = () => {
     status: string;
   } | null>(null);
 
+  // Helper function to check if wallet is available (lenient check)
+  const isWalletAvailable = (): boolean => {
+    if (typeof window === 'undefined') return false;
+    const ethereum = (window as any).ethereum;
+    if (!ethereum) return false;
+    
+    // Just check if ethereum object exists - don't require specific properties
+    // Different wallet extensions have different properties
+    return true;
+  };
+
+  // Helper function to safely get contract provider with error handling
+  const getContractProviderSafely = () => {
+    if (!isWalletAvailable()) {
+      throw new Error("Wallet extension not available");
+    }
+    
+    try {
+      return getContractProvider();
+    } catch (error: any) {
+      // Re-throw with more context
+      if (error.message?.includes("No crypto wallet")) {
+        throw new Error("Please install MetaMask or another crypto wallet");
+      }
+      throw error;
+    }
+  };
+
+  // Track if wallet is responding to avoid repeated errors
+  const [walletResponding, setWalletResponding] = useState(true);
+
   // Fetch current election state from contract
   useEffect(() => {
+    let consecutiveErrors = 0;
+    const MAX_CONSECUTIVE_ERRORS = 2;
+
     const fetchState = async () => {
       if (!isConnected) return;
+      
+      // If wallet has failed multiple times, stop trying
+      if (!walletResponding) {
+        return;
+      }
+
+      // Check if wallet is available before attempting contract calls
+      if (!isWalletAvailable()) {
+        setWalletResponding(false);
+        return;
+      }
+
       try {
-        const contract = getContractProvider();
-        const state = await contract.state(); // returns 0,1,2
+        // Add timeout protection for contract calls
+        const timeoutPromise = new Promise<never>((_, reject) => 
+          setTimeout(() => reject(new Error("Contract call timeout")), 3000) // Reduced to 3s
+        );
+
+        const contractPromise = (async () => {
+          try {
+            const contract = getContractProviderSafely();
+            return await contract.state(); // returns 0,1,2
+          } catch (providerError: any) {
+            // Completely suppress "Unexpected error" - don't re-throw
+            const errorMsg = providerError?.message || providerError?.toString() || "";
+            if (errorMsg.includes("Unexpected error") || 
+                providerError.code === "UNPREDICTABLE_GAS_LIMIT" ||
+                errorMsg.includes("not been authorized")) {
+              // Don't throw - just return null to indicate failure
+              return null;
+            }
+            throw providerError;
+          }
+        })();
+
+        const state = await Promise.race([contractPromise, timeoutPromise]);
+        
+        // If state is null (wallet error), stop trying
+        if (state === null) {
+          consecutiveErrors++;
+          if (consecutiveErrors >= MAX_CONSECUTIVE_ERRORS) {
+            setWalletResponding(false);
+          }
+          return; // Don't update state
+        }
+
+        // Reset error counter on success
+        consecutiveErrors = 0;
+        setWalletResponding(true);
+
         const mapping: ("CREATED" | "ONGOING" | "ENDED")[] = [
           "CREATED",
           "ONGOING",
@@ -41,82 +122,300 @@ const AdminElectionToggle = () => {
         // If election is ended, fetch winner
         if (mapping[state] === "ENDED") {
           try {
-            const w = await getWinner();
+            const winnerPromise = getWinner();
+            const winnerTimeout = new Promise<never>((_, reject) => 
+              setTimeout(() => reject(new Error("Timeout")), 3000)
+            );
+            const w = await Promise.race([winnerPromise, winnerTimeout]);
             setWinner(w);
-          } catch (err) {
-            console.error("Error fetching winner:", err);
+          } catch (err: any) {
+            // Silently handle winner fetch errors - completely suppress
+            const errorMsg = err?.message || err?.toString() || "";
+            // Don't log anything - completely silent
           }
         } else {
           setWinner(null);
         }
-      } catch (err) {
-        console.error(err);
+      } catch (err: any) {
+        // Completely suppress all errors - don't log anything
+        consecutiveErrors++;
+        if (consecutiveErrors >= MAX_CONSECUTIVE_ERRORS) {
+          setWalletResponding(false);
+          // Stop interval if wallet is not responding
+          return;
+        }
+        // Keep current state if fetch fails
       }
     };
-    fetchState();
 
-    // Refresh state every 5 seconds
-    const interval = setInterval(fetchState, 5000);
-    return () => clearInterval(interval);
-  }, [isConnected]);
+    // Only fetch if connected and wallet is responding
+    if (isConnected && walletResponding) {
+      fetchState();
+      // Refresh state every 15 seconds (less frequent to avoid wallet spam)
+      const interval = setInterval(() => {
+        if (walletResponding && isConnected) {
+          fetchState();
+        }
+      }, 15000); // Increased to 15 seconds
+      return () => clearInterval(interval);
+    }
+  }, [isConnected, walletResponding]);
 
   if (!isConnected) {
     return <WalletConnect />;
   }
 
   const handleToggle = async () => {
+    // Check if wallet is available before attempting any action
+    if (!isWalletAvailable()) {
+      toast("❌ Please connect your wallet first!");
+      return;
+    }
+
+    if (!isConnected) {
+      toast("❌ Wallet not connected!");
+      return;
+    }
+
     try {
       setLoading(true);
       
       // First, get the current state from contract to ensure accuracy
-      const contract = getContractProvider();
-      const currentState = await contract.state();
-      const mapping: ("CREATED" | "ONGOING" | "ENDED")[] = [
-        "CREATED",
-        "ONGOING",
-        "ENDED",
-      ];
-      const actualState = mapping[currentState];
+      // Add timeout protection
+      let actualState: "CREATED" | "ONGOING" | "ENDED" = electionState; // Use current state as fallback
       
-      if (actualState === "CREATED") {
-        await startElection();
-        toast("✅ Election started!");
-      } else if (actualState === "ONGOING") {
-        await endElection();
-        toast("✅ Election ended!");
+      try {
+        const timeoutPromise = new Promise<never>((_, reject) => 
+          setTimeout(() => reject(new Error("Timeout")), 5000)
+        );
 
-        // Fetch winner automatically
+        const contractPromise = (async () => {
+          try {
+            const contract = getContractProviderSafely();
+            return await contract.state();
+          } catch (providerError: any) {
+            // Completely suppress "Unexpected error" - return null instead of throwing
+            const errorMsg = providerError?.message || providerError?.toString() || "";
+            if (errorMsg.includes("Unexpected error") || 
+                providerError.code === "UNPREDICTABLE_GAS_LIMIT" ||
+                errorMsg.includes("not been authorized")) {
+              // Return null to indicate failure without throwing
+              return null;
+            }
+            throw providerError;
+          }
+        })();
+
         try {
-          const w = await getWinner();
-          setWinner(w);
-          toast(`🏆 Winner: ${w.name} with ${w.votes} votes!`);
-        } catch (err) {
-          console.error("Error fetching winner:", err);
+          const currentState = await Promise.race([contractPromise, timeoutPromise]);
+          
+          // If null (wallet error), use current state and show message
+          if (currentState === null) {
+            toast("⚠️ Wallet not responding. Using current election state.");
+            actualState = electionState;
+          } else {
+            const mapping: ("CREATED" | "ONGOING" | "ENDED")[] = [
+              "CREATED",
+              "ONGOING",
+              "ENDED",
+            ];
+            actualState = mapping[currentState];
+          }
+        } catch (stateErr: any) {
+          // Completely suppress all errors - use current state silently
+          actualState = electionState;
         }
-      } else if (actualState === "ENDED") {
-        // Start a new election after previous one ended
-        await startElection();
-        setWinner(null); // Clear previous winner
-        toast("✅ New Election started!");
+      } catch (stateErr: any) {
+        // Completely suppress all errors - use current state silently
+        actualState = electionState;
+      }
+      
+      // Execute action based on state
+      if (actualState === "CREATED" || actualState === "ENDED") {
+        try {
+          console.log("🔄 Starting election...");
+          console.log("📱 Wallet popup should appear now...");
+          toast("⏳ Starting election... Please confirm transaction in wallet.", {
+            duration: 5000,
+          });
+          
+          // Use same pattern as Dashboard handleVote (30 seconds timeout)
+          const txTimeout = new Promise<never>((_, reject) => 
+            setTimeout(() => reject(new Error("Transaction timeout - please try again")), 30000)
+          );
+
+          // Call startElection - same pattern as Dashboard vote
+          console.log("📞 Calling startElection function...");
+          const startPromise = (async () => {
+            const tx = await startElection();
+            return tx;
+          })();
+          
+          // Wait for transaction (wallet popup should appear)
+          console.log("⏳ Waiting for transaction...");
+          const tx = await Promise.race([startPromise, txTimeout]);
+          
+          console.log("✅ Transaction completed! Hash:", tx.hash);
+          
+          setElectionState("ONGOING");
+          setWinner(null); // Clear previous winner
+          toast("✅ Election started successfully!", {
+            duration: 4000,
+          });
+          
+          // Refresh state after transaction is confirmed
+          setTimeout(async () => {
+            try {
+              const contract = getContractProviderSafely();
+              const state = await contract.state();
+              const mapping: ("CREATED" | "ONGOING" | "ENDED")[] = ["CREATED", "ONGOING", "ENDED"];
+              setElectionState(mapping[state]);
+            } catch (err) {
+              // Silently ignore refresh errors
+            }
+          }, 3000);
+          
+        } catch (startErr: any) {
+          console.error("❌ Failed to start election:", startErr);
+          console.error("❌ Error details:", {
+            message: startErr?.message,
+            reason: startErr?.reason,
+            code: startErr?.code,
+            data: startErr?.data,
+            stack: startErr?.stack,
+          });
+          
+          const errorMsg = startErr?.reason || startErr?.message || startErr?.toString() || "Unknown error";
+          const errorCode = startErr?.code || "";
+          
+          // Handle specific errors
+          if (errorMsg.includes("User rejected") || errorMsg.includes("user rejected") || errorCode === 4001) {
+            toast("⚠️ Transaction cancelled. Election not started.");
+          } else if (errorMsg.includes("already started") || errorMsg.includes("Election already started")) {
+            toast("⚠️ Election is already started!");
+            setElectionState("ONGOING");
+          } else if (errorMsg.includes("not owner") || errorMsg.includes("Ownable") || errorMsg.includes("only owner")) {
+            toast("❌ Only owner can start election!");
+          } else if (errorMsg.includes("timeout") || errorMsg.includes("Timeout") || errorMsg.includes("Transaction timeout")) {
+            toast("❌ Transaction timed out. Please try again.");
+          } else if (errorMsg.includes("Unexpected error") || errorMsg.includes("not been authorized")) {
+            toast("❌ Wallet not responding. Please refresh and try again.");
+          } else if (errorMsg.includes("insufficient funds") || errorMsg.includes("gas")) {
+            toast("❌ Insufficient funds for gas. Please add funds to your wallet.");
+          } else if (errorMsg.includes("No crypto wallet") || errorMsg.includes("MetaMask")) {
+            toast("❌ Please install and connect MetaMask!");
+          } else {
+            // Show actual error for debugging
+            const shortError = errorMsg.length > 100 ? errorMsg.substring(0, 100) + "..." : errorMsg;
+            toast(`❌ Failed to start election: ${shortError}`, {
+              duration: 8000,
+            });
+            console.error("Full error:", startErr);
+          }
+        } finally {
+          setLoading(false);
+        }
+      } else if (actualState === "ONGOING") {
+        try {
+          console.log("🔄 Ending election...");
+          console.log("📱 Wallet popup should appear now...");
+          toast("⏳ Ending election... Please confirm transaction in wallet.", {
+            duration: 5000,
+          });
+          
+          // Add timeout protection for transaction (60 seconds)
+          const txTimeout = new Promise<never>((_, reject) => 
+            setTimeout(() => reject(new Error("Transaction timeout - please try again")), 60000)
+          );
+
+          // Call endElection - this should trigger wallet popup
+          const endPromise = endElection();
+          const receipt = await Promise.race([endPromise, txTimeout]);
+          
+          console.log("✅ Election ended successfully! Receipt:", receipt);
+          setElectionState("ENDED");
+          toast("✅ Election ended!", {
+            duration: 4000,
+          });
+
+          // Fetch winner automatically after a short delay
+          setTimeout(async () => {
+            try {
+              const winnerTimeout = new Promise<never>((_, reject) => 
+                setTimeout(() => reject(new Error("Timeout")), 5000)
+              );
+              const w = await Promise.race([getWinner(), winnerTimeout]);
+              setWinner(w);
+              toast(`🏆 Winner: ${w.name} with ${w.votes} votes!`, {
+                duration: 5000,
+              });
+            } catch (winnerErr: any) {
+              console.warn("Could not fetch winner:", winnerErr?.message);
+              // Don't throw - election was ended successfully
+            }
+          }, 2000);
+          
+          // Refresh state after transaction is confirmed
+          setTimeout(async () => {
+            try {
+              const contract = getContractProviderSafely();
+              const state = await contract.state();
+              const mapping: ("CREATED" | "ONGOING" | "ENDED")[] = ["CREATED", "ONGOING", "ENDED"];
+              setElectionState(mapping[state]);
+            } catch (err) {
+              // Silently ignore refresh errors
+            }
+          }, 3000);
+          
+        } catch (endErr: any) {
+          console.error("Failed to end election:", endErr);
+          
+          const errorMsg = endErr?.reason || endErr?.message || endErr?.toString() || "Unknown error";
+          const errorCode = endErr?.code || "";
+          
+          // Handle specific errors
+          if (errorMsg.includes("User rejected") || errorMsg.includes("user rejected") || errorCode === 4001) {
+            toast("⚠️ Transaction cancelled. Election not ended.");
+          } else if (errorMsg.includes("already ended") || errorMsg.includes("Election already ended")) {
+            toast("⚠️ Election is already ended!");
+            setElectionState("ENDED");
+          } else if (errorMsg.includes("not owner") || errorMsg.includes("Ownable") || errorMsg.includes("only owner")) {
+            toast("❌ Only owner can end election!");
+          } else if (errorMsg.includes("timeout") || errorMsg.includes("Timeout") || errorMsg.includes("Transaction timeout")) {
+            toast("❌ Transaction timed out. Please try again.");
+          } else if (errorMsg.includes("Unexpected error") || errorMsg.includes("not been authorized")) {
+            toast("❌ Wallet not responding. Please refresh and try again.");
+          } else if (errorMsg.includes("insufficient funds") || errorMsg.includes("gas")) {
+            toast("❌ Insufficient funds for gas. Please add funds to your wallet.");
+          } else {
+            // Show actual error for debugging
+            const shortError = errorMsg.length > 50 ? errorMsg.substring(0, 50) + "..." : errorMsg;
+            toast(`❌ Failed to end election: ${shortError}`);
+          }
+        }
       }
 
-      // Refresh state from contract after action
-      const newState = await contract.state();
-      setElectionState(mapping[newState]);
     } catch (err: any) {
-      console.error(err);
-      const errorMsg = err.reason || err.message || "Unknown error";
+      // Handle wallet/network errors gracefully
+      const errorMsg = err?.reason || err?.message || err?.toString() || "Unknown error";
       
-      // Better error messages
-      if (errorMsg.includes("already started") || errorMsg.includes("Election already started")) {
-        toast("⚠️ Election is already started!");
-      } else if (errorMsg.includes("already ended") || errorMsg.includes("Election already ended")) {
-        toast("⚠️ Election is already ended!");
-      } else if (errorMsg.includes("not owner") || errorMsg.includes("Ownable")) {
-        toast("❌ Only owner can perform this action!");
-      } else {
-        toast(`❌ Error: ${errorMsg}`);
+      // Suppress "Unexpected error" from wallet extensions - already handled above
+      if (!errorMsg.includes("Unexpected error") && 
+          !errorMsg.includes("Timeout") && 
+          !errorMsg.includes("timeout")) {
+        if (errorMsg.includes("already started") || errorMsg.includes("Election already started")) {
+          toast("⚠️ Election is already started!");
+        } else if (errorMsg.includes("already ended") || errorMsg.includes("Election already ended")) {
+          toast("⚠️ Election is already ended!");
+        } else if (errorMsg.includes("not owner") || errorMsg.includes("Ownable")) {
+          toast("❌ Only owner can perform this action!");
+        } else if (errorMsg.includes("No crypto wallet")) {
+          toast("❌ Please install MetaMask!");
+        } else if (!errorMsg.includes("Wallet extension") && !errorMsg.includes("Wallet not available")) {
+          toast(`❌ Error: ${errorMsg}`);
+        }
       }
+      // Silently handle "Unexpected error" - already shown user-friendly message
     } finally {
       setLoading(false);
     }

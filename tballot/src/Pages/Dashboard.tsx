@@ -14,31 +14,104 @@ const Dashboard = () => {
   //  Fetch candidates
   useEffect(() => {
     const fetchCandidates = async () => {
+      if (!isConnected) return;
+      
+      // Check if wallet is available before attempting contract calls
+      if (typeof window === 'undefined' || !(window as any).ethereum) {
+        console.log("⏭️ Wallet not available, skipping candidate fetch");
+        return;
+      }
+
       try {
-        const list = await getAllCandidates();
-        setCandidates(list);
-      } catch (err) {
-        console.error(err);
+        // Add timeout protection
+        const timeoutPromise = new Promise<never>((_, reject) => 
+          setTimeout(() => reject(new Error("Timeout")), 5000)
+        );
+
+        const candidatesPromise = getAllCandidates();
+        const list = await Promise.race([candidatesPromise, timeoutPromise]);
+        
+        if (list && Array.isArray(list)) {
+          setCandidates(list);
+        }
+      } catch (err: any) {
+        // Silently handle wallet/contract errors
+        if (!err?.message?.includes("Unexpected error") && 
+            !err?.message?.includes("Timeout") &&
+            !err?.message?.includes("No crypto wallet")) {
+          console.warn("Could not fetch candidates:", err?.message || err);
+        }
+        // Keep empty array on error
+        setCandidates([]);
       }
     };
-    if (isConnected) fetchCandidates();
+    
+    if (isConnected) {
+      fetchCandidates();
+      // Refresh candidates every 10 seconds (less frequent to avoid wallet spam)
+      const interval = setInterval(() => {
+        if (isConnected) fetchCandidates();
+      }, 10000);
+      return () => clearInterval(interval);
+    }
   }, [isConnected]);
 
   //  Vote for a candidate
   const handleVote = async (id: string) => {
+    // Check if wallet is available
+    if (typeof window === 'undefined' || !(window as any).ethereum) {
+      toast("❌ Please connect your wallet first!");
+      return;
+    }
+
     try {
       setLoading(true);
-      const contract = await getContractSigner();
-      const tx = await contract.vote(id);
-      await tx.wait();
-      toast(`Successfully voted for candidate #${id}`);
+      
+      // Add timeout protection
+      const timeoutPromise = new Promise<never>((_, reject) => 
+        setTimeout(() => reject(new Error("Transaction timeout")), 30000)
+      );
 
-      // Refresh candidates list to update vote counts
-      const updatedList = await getAllCandidates();
-      setCandidates(updatedList);
+      const votePromise = (async () => {
+        const contract = await getContractSigner();
+        const tx = await contract.vote(id);
+        await tx.wait();
+        return tx;
+      })();
+
+      await Promise.race([votePromise, timeoutPromise]);
+      toast(`✅ Successfully voted for candidate #${id}`);
+
+      // Refresh candidates list to update vote counts (with error handling)
+      try {
+        const refreshTimeout = new Promise<never>((_, reject) => 
+          setTimeout(() => reject(new Error("Timeout")), 5000)
+        );
+        const updatedList = await Promise.race([getAllCandidates(), refreshTimeout]);
+        if (updatedList && Array.isArray(updatedList)) {
+          setCandidates(updatedList);
+        }
+      } catch (refreshErr: any) {
+        // Silently handle refresh errors - vote was successful
+        console.warn("Could not refresh candidates after vote:", refreshErr?.message);
+      }
     } catch (err: any) {
-      console.error(err);
-      toast(` Error: ${err.reason || err.message}`);
+      const errorMsg = err?.reason || err?.message || "Unknown error";
+      
+      // Better error messages
+      if (errorMsg.includes("Unexpected error")) {
+        toast("❌ Wallet extension not responding. Please try again.");
+      } else if (errorMsg.includes("Timeout")) {
+        toast("❌ Transaction timed out. Please try again.");
+      } else if (errorMsg.includes("already voted") || errorMsg.includes("Already voted")) {
+        toast("⚠️ You have already voted!");
+      } else if (errorMsg.includes("not registered") || errorMsg.includes("Not registered")) {
+        toast("❌ You are not registered as a voter!");
+      } else if (errorMsg.includes("No crypto wallet")) {
+        toast("❌ Please install MetaMask!");
+      } else {
+        toast(`❌ Error: ${errorMsg}`);
+      }
     } finally {
       setLoading(false);
     }

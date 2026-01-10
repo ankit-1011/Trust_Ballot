@@ -10,7 +10,6 @@
 - 🔐 **Secure & Transparent**: All votes are recorded on-chain and verifiable
 - ⚡ **Real-time Updates**: Live vote counts and election state changes
 - 👥 **Voter Management**: Self-registration and admin-managed voter lists
-- 🎨 **Modern UI**: Beautiful, responsive interface with 8-bit retro theme
 - 📱 **Mobile Responsive**: Works seamlessly on all devices
 - 🔄 **Election Lifecycle**: Complete election management (Create → Start → Vote → End → Results)
 

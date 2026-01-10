@@ -75,15 +75,9 @@ const LineraFeatures = () => {
           console.warn("Could not get chain info (using mock):", error);
         }
         
-        // Load actual candidates from Ethereum contract on component mount
-        // This ensures leaderboard shows actual registered candidates
-        try {
-          const { getAllCandidates: getLineraCandidates } = await import("../Contracts/lineraContracts");
-          const candidates = await getLineraCandidates();
-          console.log("📊 Loaded candidates on mount:", candidates.length, candidates.map(c => c.name));
-        } catch (error) {
-          console.warn("Could not load candidates on mount:", error);
-        }
+        // Note: Candidates will be loaded automatically when available
+        // We don't force fetch here to avoid wallet connection errors
+        // Leaderboard will update automatically via subscriptions
       } catch (error) {
         console.error("Failed to initialize Linera:", error);
         // Still set initialized to true to show UI

@@ -108,22 +108,81 @@ export interface Voter {
   address: string;
 }
 
+// Helper function to check if wallet is available and connected
+const isWalletAvailable = (): boolean => {
+  if (typeof window === 'undefined') return false;
+  return !!(window as any).ethereum;
+};
+
 // Helper function to fetch actual candidates from Ethereum contract
+// This will gracefully fail if wallet is not connected - Linera features work independently
 const fetchActualCandidates = async (): Promise<Candidate[]> => {
   try {
-    // Import dynamically to avoid circular dependency
-    const { getAllCandidates: getEtherCandidates } = await import("./etherContracts");
-    const etherCandidates = await getEtherCandidates();
+    // First check if ethereum provider is available
+    if (!isWalletAvailable()) {
+      // Wallet not available - this is fine, use Linera mock data
+      return [];
+    }
+
+    // Wrap the contract call in a promise with timeout
+    // This prevents hanging requests when wallet extension is not responding
+    const fetchPromise = (async () => {
+      try {
+        // Import dynamically to avoid circular dependency
+        const { getAllCandidates: getEtherCandidates } = await import("./etherContracts");
+        const etherCandidates = await getEtherCandidates();
+        
+        if (!etherCandidates || !Array.isArray(etherCandidates)) {
+          return [];
+        }
+        
+        // Convert Ethereum contract candidates to Linera format
+        return etherCandidates.map((c: any) => ({
+          id: c.id?.toString() || "0",
+          name: c.name || "Unknown",
+          meta: c.meta || "",
+          voteCount: c.voteCount?.toString() || "0",
+        }));
+      } catch (innerError: any) {
+        // Re-throw to be caught by outer catch
+        throw innerError;
+      }
+    })();
+
+    // Race against timeout to prevent hanging
+    const timeoutPromise = new Promise<Candidate[]>((_, reject) => 
+      setTimeout(() => reject(new Error("TIMEOUT")), 3000)
+    );
     
-    // Convert Ethereum contract candidates to Linera format
-    return etherCandidates.map((c: any) => ({
-      id: c.id?.toString() || "0",
-      name: c.name || "Unknown",
-      meta: c.meta || "",
-      voteCount: c.voteCount?.toString() || "0",
-    }));
-  } catch (error) {
-    console.warn("Failed to fetch actual candidates from Ethereum contract, using mock data:", error);
+    const result = await Promise.race([fetchPromise, timeoutPromise]);
+    return result;
+    
+  } catch (error: any) {
+    // Silently handle all errors - Linera features work independently
+    // Common errors:
+    // - "Unexpected error" from wallet extension not responding
+    // - "No crypto wallet found" when MetaMask is not installed
+    // - "TIMEOUT" when wallet is slow/not responding
+    // - Network errors when contract is not deployed
+    
+    if (error?.message === "TIMEOUT") {
+      // Timeout is expected when wallet is not responding
+      return [];
+    }
+    
+    if (error?.message?.includes("No crypto wallet") || 
+        error?.message?.includes("Unexpected error") ||
+        error?.code === "UNPREDICTABLE_GAS_LIMIT") {
+      // These are expected when wallet is not connected/responding
+      return [];
+    }
+    
+    // For other errors, log once but don't spam console
+    if (!error._logged) {
+      console.log("⏭️ Using Linera mock data (Ethereum contract not available)");
+      error._logged = true;
+    }
+    
     return [];
   }
 };
@@ -498,19 +557,24 @@ export const initializeLinera = async (config?: {
     isInitialized = true;
     subscriptionActive = config?.enableSubscriptions ?? true;
     
-    // Load actual candidates from Ethereum contract on initialization
-    fetchActualCandidates().then(candidates => {
-      if (candidates.length > 0) {
-        mockState.candidates = candidates;
-        console.log("✅ Loaded actual candidates on initialization:", candidates.length);
-        
-        // Trigger candidates updated event
-        const candidateCallbacks = Array.from(eventCallbacks.values()).flatMap(set => Array.from(set));
-        candidateCallbacks.forEach(cb => cb({ type: "candidates_updated" }));
-      }
-    }).catch(error => {
-      console.warn("Could not load candidates on initialization:", error);
-    });
+    // Try to load actual candidates from Ethereum contract on initialization (optional)
+    // This will gracefully fail if wallet is not connected - Linera works independently
+    if (isWalletAvailable()) {
+      fetchActualCandidates().then(candidates => {
+        if (candidates && candidates.length > 0) {
+          mockState.candidates = candidates;
+          console.log("✅ Loaded", candidates.length, "candidates from Ethereum contract");
+          
+          // Trigger candidates updated event
+          const candidateCallbacks = Array.from(eventCallbacks.values()).flatMap(set => Array.from(set));
+          candidateCallbacks.forEach(cb => cb({ type: "candidates_updated" }));
+        }
+      }).catch(() => {
+        // Silently fail - Linera features work without Ethereum contract
+      });
+    } else {
+      console.log("💡 Linera features active (Ethereum wallet optional)");
+    }
     
     // Don't auto-start election - wait for user to explicitly start it
     // Election state starts as CREATED and remains CREATED until explicitly started
@@ -835,43 +899,53 @@ export const getCandidate = async (id: number): Promise<Candidate> => {
 
 /**
  * Get all candidates (with real-time updates support)
- * Fetches actual candidates from Ethereum contract if available
+ * Uses Linera mock state - Ethereum contract is optional (only if wallet connected)
  */
 export const getAllCandidates = async (): Promise<Candidate[]> => {
   try {
-    // If election is ONGOING and we have candidates in mock state, return those
-    if (mockState.electionState === "ONGOING" && mockState.candidates.length > 0) {
+    // Priority 1: Return mock state candidates if available (fastest, no wallet needed)
+    if (mockState.candidates.length > 0) {
       return [...mockState.candidates];
     }
     
-    // If election is not ONGOING or no candidates, fetch from actual Ethereum contract
-    if (mockState.electionState !== "ONGOING") {
-      const actualCandidates = await fetchActualCandidates();
-      if (actualCandidates.length > 0) {
-        // Update mock state with actual candidates
-        mockState.candidates = actualCandidates;
-        return [...actualCandidates];
+    // Priority 2: Try Linera client query (mock client, no wallet needed)
+    try {
+      const client = getClient();
+      const candidates = await client.query("getAllCandidates");
+      
+      if (candidates && Array.isArray(candidates) && candidates.length > 0) {
+        // Update mock state for future calls
+        mockState.candidates = candidates.map((c: any) => ({
+          id: c.id?.toString() || c.id || "0",
+          name: c.name || "Unknown",
+          meta: c.meta || "",
+          voteCount: c.voteCount?.toString() || "0",
+        }));
+        return [...mockState.candidates];
+      }
+    } catch (lineraError) {
+      // Silently continue to next option
+    }
+    
+    // Priority 3: Try Ethereum contract ONLY if wallet is available (optional)
+    // This will gracefully fail if wallet is not connected
+    if (isWalletAvailable() && mockState.electionState === "CREATED") {
+      try {
+        const actualCandidates = await fetchActualCandidates();
+        if (actualCandidates.length > 0) {
+          mockState.candidates = actualCandidates;
+          return [...actualCandidates];
+        }
+      } catch (ethError) {
+        // Silently fail - Ethereum contract is optional for Linera features
       }
     }
     
-    const client = getClient();
-    const candidates = await client.query("getAllCandidates");
-    
-    // If query returns valid array, use it
-    if (candidates && Array.isArray(candidates) && candidates.length > 0) {
-      return candidates.map((c: any) => ({
-        id: c.id?.toString() || c.id || "0",
-        name: c.name || "Unknown",
-        meta: c.meta || "",
-        voteCount: c.voteCount?.toString() || "0",
-      }));
-    }
-    
-    // Fallback to mock state
-    return [...mockState.candidates];
+    // Fallback: Return empty array (valid state when no candidates registered yet)
+    return [];
   } catch (error) {
-    console.error("Error in getAllCandidates, using mock state:", error);
-    return [...mockState.candidates]; // Fallback to mock state
+    // Silent fallback - return empty array
+    return [];
   }
 };
 

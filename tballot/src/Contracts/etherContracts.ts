@@ -11,8 +11,22 @@ export const getprovider = () => {
 // Signer (wallet user)
 export const getSigner = async () => {
   const provider = getprovider();
-  await provider.send("eth_requestAccounts", []);
-  return provider.getSigner();
+  const ethereum = (window as any).ethereum;
+  
+  // Since wagmi is already connected (verified by isConnected in component),
+  // Try to get signer using selectedAddress if available, otherwise use default
+  if (ethereum?.selectedAddress) {
+    console.log("✅ Using selectedAddress for signer:", ethereum.selectedAddress);
+    // Use the selected address directly - this ensures we use the connected account
+    return provider.getSigner(ethereum.selectedAddress);
+  }
+  
+  // If no selectedAddress, use default signer (should still work if wallet is connected)
+  console.log("📝 Getting default signer (wallet should be connected via wagmi)...");
+  const signer = provider.getSigner();
+  console.log("✅ Signer obtained (wallet popup will appear when transaction is sent)");
+  
+  return signer;
 };
 
 //  Contract (read-only)
@@ -54,18 +68,88 @@ export const registerVoter = async (
 
 // Start election (Admin only)
 export const startElection = async () => {
-  const contract = await getContractSigner();
-  const tx = await contract.startElection();
-  await tx.wait();
-  console.log(" Election started!");
+  try {
+    console.log("🚀 startElection called");
+    
+    // Check wallet availability
+    if (typeof window === 'undefined' || !(window as any).ethereum) {
+      throw new Error("Please install MetaMask!");
+    }
+    
+    console.log("✅ Wallet detected");
+    const ethereum = (window as any).ethereum;
+    if (ethereum?.selectedAddress) {
+      console.log("✅ Connected address:", ethereum.selectedAddress);
+    }
+    
+    // Use exact same pattern as Dashboard handleVote (which works)
+    console.log("📝 Getting contract signer...");
+    const contract = await getContractSigner();
+    console.log("✅ Contract signer obtained");
+    
+    console.log("📝 Calling contract.startElection()...");
+    console.log("📱 ⚠️ METAMASK POPUP SHOULD APPEAR NOW - PLEASE CONFIRM TRANSACTION! ⚠️");
+    
+    // Call the contract function - this WILL trigger wallet popup
+    // This is the critical line that triggers MetaMask transaction popup
+    const tx = await contract.startElection();
+    
+    console.log("✅ Transaction sent! Hash:", tx.hash);
+    console.log("⏳ Waiting for blockchain confirmation...");
+    
+    // Wait for transaction confirmation (user should confirm in wallet first)
+    await tx.wait();
+    
+    console.log("✅ Transaction confirmed! Election started!");
+    return tx;
+  } catch (error: any) {
+    console.error("❌ Error in startElection:", error);
+    console.error("❌ Error message:", error?.message);
+    console.error("❌ Error code:", error?.code);
+    throw error;
+  }
 };
 
 // End election (Admin only)
 export const endElection = async () => {
-  const contract = await getContractSigner();
-  const tx = await contract.endElection();
-  await tx.wait();
-  console.log("Election ended!");
+  try {
+    console.log("🚀 endElection called");
+    
+    // First, ensure wallet is connected
+    if (typeof window === 'undefined' || !(window as any).ethereum) {
+      throw new Error("Please install MetaMask!");
+    }
+
+    console.log("✅ Wallet detected");
+    
+    // Use getContractSigner() which already handles connection properly
+    console.log("📝 Getting contract signer...");
+    const contract = await getContractSigner();
+    console.log("✅ Contract signer obtained");
+    
+    console.log("📝 Calling contract.endElection()...");
+    console.log("📱 ⚠️ WALLET POPUP SHOULD APPEAR NOW - PLEASE CONFIRM TRANSACTION! ⚠️");
+    
+    // Call the contract function - this will trigger wallet popup
+    const tx = await contract.endElection();
+    
+    console.log("✅ Transaction sent! Hash:", tx.hash);
+    console.log("⏳ Waiting for blockchain confirmation...");
+    
+    // Wait for transaction confirmation
+    const receipt = await tx.wait();
+    
+    console.log("✅ Transaction confirmed! Block:", receipt.blockNumber);
+    console.log("✅ Election ended!");
+    
+    return receipt;
+  } catch (error: any) {
+    console.error("❌ Error in endElection:", error);
+    console.error("❌ Error message:", error?.message);
+    console.error("❌ Error code:", error?.code);
+    // Re-throw to let caller handle
+    throw error;
+  }
 };
 
 // ------------------------------------------------------------
