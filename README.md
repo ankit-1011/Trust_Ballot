@@ -297,14 +297,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## 🔗 Links
-
-- **Live Demo**: https://trust-ballot-zujo.vercel.app
-- **Backend API**: https://trust-ballot.onrender.com
-- **GitHub**: [Repository URL]
-
----
-
 ## 💡 Key Highlights
 
 ✨ **Decentralized** - No single point of failure  
