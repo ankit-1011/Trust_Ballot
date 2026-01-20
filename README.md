@@ -2,11 +2,6 @@
 
 **Decentralized, transparent, and privacy-first voting platform**
 
-[![React](https://img.shields.io/badge/React-19-blue)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue)](https://www.typescriptlang.org/)
-[![Ethereum](https://img.shields.io/badge/Ethereum-Sepolia-purple)](https://ethereum.org/)
-[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
-
 ## 📖 Overview
 
 TrustBallot is a full-stack decentralized voting application that enables secure, transparent, and verifiable elections on the blockchain. Built with modern web technologies and designed for real-time updates.
@@ -178,8 +173,6 @@ Trust_Ballot/
 ### UI/UX
 - ✨ 8-bit retro theme
 - 🎬 Smooth animations
-- 📱 Fully responsive
-- 🌙 Dark mode support
 - 🔔 Toast notifications
 
 ### Security
@@ -196,29 +189,7 @@ Trust_Ballot/
 - 🗳️ Voting mechanism
 - 🏆 Winner calculation
 
----
-
-## 📊 Smart Contract Functions
-
-### Admin Functions
-- `addCandidate()` - Add election candidates
-- `registerVoter()` - Register voters
-- `startElection()` - Begin voting
-- `endElection()` - Close voting
-- `getWinner()` - Calculate winner
-
-### Voter Functions
-- `selfRegister()` - Register with wallet
-- `vote()` - Cast vote
-- `getVoter()` - View voter details
-
-### View Functions
-- `getAllCandidates()` - List candidates
-- `getAllVoters()` - List voters
-- `getElectionState()` - Current state
-- `hasVoted()` - Check status
-
----
+--
 
 ## 🌐 Deployment
 
@@ -263,14 +234,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## 🔗 Links
-
-- **Live Demo**: https://trust-ballot-zujo.vercel.app
-- **Backend API**: https://trust-ballot.onrender.com
-- **GitHub**: [Repository URL]
-
----
-
 ## 💡 Key Highlights
 
 ✨ **Decentralized** - No single point of failure  
@@ -282,14 +245,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 **Built with ❤️ for transparent, democratic voting**
-
----
-
-## 📞 Support
-
-For questions or issues, please open an issue on GitHub.
-
----
 
 ## 🙏 Acknowledgments
 
