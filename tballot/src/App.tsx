@@ -14,7 +14,6 @@ import { config } from "../WalletConfig";
 import AdminElectionToggle from "./Pages/AdminElectionToggle"
 import ProtectedLayout from "./Protected/ProtectedLayout"
 import AuthProvider from "./lib/AuthProvider"
-import LineraFeatures from "./components/LineraFeatures"
 
 
 const queryClient = new QueryClient();
@@ -30,12 +29,11 @@ const App = () => {
               <Route path="/" element={<Home />} />
               <Route path="/menu" element={<ProtectedLayout/>}>
                 <Route index element={<Navigate to="/menu/dashboard" replace />} />
-                <Route path="register" element={<Register />} />
                 <Route path="dashboard" element={<Dashboard />} />
+                <Route path="register" element={<Register />} />
                 <Route path="candidate-list" element={<Candidate />} />
                 <Route path="voter-list" element={<Voter />} />
                 <Route path="toggle" element={<AdminElectionToggle />} />
-                <Route path="linera-features" element={<LineraFeatures />} />
               </Route>
             </Routes>
             <Toaster position="top-right" richColors closeButton />

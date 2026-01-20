@@ -84,7 +84,7 @@ const Candidate = () => {
 
   return (
     <div className=" w-90 sm:w-full ml-40 fixed mt-4 sm:mt-10 md:mt-20 p-4">
-      <Card className="w-full max-w-[596px] shadow-lg-blue">
+      <Card className="w-full max-w-[596px] shadow-lg-blue ">
         <CardHeader className="text-center">
           <CardTitle className="text-lg sm:text-xl md:text-2xl">Candidate Registration</CardTitle>
         </CardHeader>

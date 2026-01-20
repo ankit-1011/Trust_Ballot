@@ -235,16 +235,14 @@ const AdminElectionToggle = () => {
         try {
           console.log("🔄 Starting election...");
           console.log("📱 Wallet popup should appear now...");
-          toast("⏳ Starting election... Please confirm transaction in wallet.", {
-            duration: 5000,
-          });
+         
           
-          // Use same pattern as Dashboard handleVote (30 seconds timeout)
+          // Add timeout protection for transaction (30 seconds)
           const txTimeout = new Promise<never>((_, reject) => 
             setTimeout(() => reject(new Error("Transaction timeout - please try again")), 30000)
           );
 
-          // Call startElection - same pattern as Dashboard vote
+          // Call startElection
           console.log("📞 Calling startElection function...");
           const startPromise = (async () => {
             const tx = await startElection();
@@ -259,9 +257,7 @@ const AdminElectionToggle = () => {
           
           setElectionState("ONGOING");
           setWinner(null); // Clear previous winner
-          toast("✅ Election started successfully!", {
-            duration: 4000,
-          });
+         
           
           // Refresh state after transaction is confirmed
           setTimeout(async () => {
@@ -307,9 +303,7 @@ const AdminElectionToggle = () => {
           } else {
             // Show actual error for debugging
             const shortError = errorMsg.length > 100 ? errorMsg.substring(0, 100) + "..." : errorMsg;
-            toast(`❌ Failed to start election: ${shortError}`, {
-              duration: 8000,
-            });
+          
             console.error("Full error:", startErr);
           }
         } finally {
@@ -319,9 +313,7 @@ const AdminElectionToggle = () => {
         try {
           console.log("🔄 Ending election...");
           console.log("📱 Wallet popup should appear now...");
-          toast("⏳ Ending election... Please confirm transaction in wallet.", {
-            duration: 5000,
-          });
+        
           
           // Add timeout protection for transaction (60 seconds)
           const txTimeout = new Promise<never>((_, reject) => 
@@ -334,9 +326,7 @@ const AdminElectionToggle = () => {
           
           console.log("✅ Election ended successfully! Receipt:", receipt);
           setElectionState("ENDED");
-          toast("✅ Election ended!", {
-            duration: 4000,
-          });
+        
 
           // Fetch winner automatically after a short delay
           setTimeout(async () => {
@@ -346,9 +336,7 @@ const AdminElectionToggle = () => {
               );
               const w = await Promise.race([getWinner(), winnerTimeout]);
               setWinner(w);
-              toast(`🏆 Winner: ${w.name} with ${w.votes} votes!`, {
-                duration: 5000,
-              });
+           
             } catch (winnerErr: any) {
               console.warn("Could not fetch winner:", winnerErr?.message);
               // Don't throw - election was ended successfully

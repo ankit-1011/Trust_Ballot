@@ -46,9 +46,6 @@ export default function Menu() {
                     <Button variant="ghost" className="w-full justify-start gap-2 sm:gap-3 text-sm sm:text-base" onClick={() => { Navigate("/menu/toggle"); setIsMobileMenuOpen(false); }}>
                         <ToggleLeft size={20} />Toggle Election
                     </Button>
-                    <Button variant="ghost" className="w-full justify-start gap-2 sm:gap-3 text-sm sm:text-base" onClick={() => { Navigate("/menu/linera-features"); setIsMobileMenuOpen(false); }}>
-                        <span className="text-lg">⚡</span> Linera Features
-                    </Button>
                 </nav>
                 <div className="p-4 sm:p-6 border-t border-gray-300">
                     <Button className="w-full p-4 sm:p-7 cursor-pointer text-sm sm:text-base" variant="destructive" onClick={() => { localStorage.removeItem("userEmail"); toast("You Logout!"); Navigate("/") }}>

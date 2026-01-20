@@ -45,18 +45,6 @@ TrustBallot is a full-stack decentralized voting application that enables secure
 - **Hardhat** - Development framework
 - **TrustBallot.sol** - Main voting contract
 
-### Linera Microchains (`linera-app/`) ⚡
-- **Rust** - Linera application compiled to Wasm
-- **Real-time subscriptions** - WebSocket-based instant updates
-- **High throughput** - 1000+ TPS per microchain
-- **Sub-second finality** - Milliseconds transaction confirmation
-- **User-controlled chains** - Dedicated microchains per user
-- **Elastic validators** - Parallel transaction processing
-- **Zero-cost idle** - Efficient resource management
-- **Cross-chain messaging** - Asynchronous communication
-- **No mempool** - Direct block submission
-- **Ephemeral chains** - On-demand temporary chains
-
 ---
 
 ## 🚀 Quick Start
@@ -157,14 +145,10 @@ Trust_Ballot/
 │   ├── models/            # Database models
 │   └── controllers/       # Business logic
 │
-├── ⛓️ Contracts/           # Smart Contracts
-│   ├── contracts/         # Solidity contracts
-│   ├── scripts/           # Deployment scripts
-│   └── hardhat.config.ts
-│
-└── 🚀 linera-app/          # Linera Application (Future)
-    ├── src/lib.rs         # Rust application
-    └── Cargo.toml
+└── ⛓️ Contracts/           # Smart Contracts
+    ├── contracts/         # Solidity contracts
+    ├── scripts/           # Deployment scripts
+    └── hardhat.config.ts
 ```
 
 ---
@@ -254,56 +238,9 @@ Trust_Ballot/
 
 ---
 
-## 🚀 Linera Microchains Features
-
-### Architecture Benefits
-- **Microchains**: Dedicated chain per user/application
-- **Parallel Processing**: Multiple chains process simultaneously
-- **Horizontal Scaling**: Add chains, not increase block size
-- **User Control**: Users control their microchain
-
-### Performance
-- ⚡ **Sub-second Finality**: Milliseconds confirmation
-- 🚀 **1000+ TPS**: High throughput capability
-- 💰 **Zero-cost Idle**: Inactive chains free
-- 📊 **Elastic Scaling**: Auto-scales with demand
-- 🔄 **No Mempool**: Direct submission, no waiting
-
-### Real-time Capabilities
-- 📡 **WebSocket Subscriptions**: Live vote updates
-- 🔔 **Event Streaming**: Real-time notifications
-- 📈 **Live Analytics**: Instant vote counts
-- 🎯 **Instant Feedback**: Immediate confirmations
-
-### Developer Experience
-- 🛠️ **Rust/Wasm**: Type-safe, performant
-- 🔌 **JavaScript SDK**: Easy integration
-- 📦 **Modular**: Reusable components
-- 🧪 **Fast Dev**: Quick iteration
-- 🔐 **Secure**: BFT consensus
-
-### Cost Benefits
-- 💵 **Lower Fees**: Efficient architecture
-- ⚡ **Batch Ops**: Multiple operations per tx
-- 🎯 **Targeted**: Only active chains consume
-- 📉 **Reduced Overhead**: Minimal maintenance
-
-### Planned Features
-- 📈 Analytics dashboard
-- 🔔 Email notifications
-- 📱 Mobile app
-- 🌍 Multi-language support
-- 🎨 Custom themes
-- 📊 Advanced voting methods
-
----
-
 ## 📚 Documentation
 
 - **[PROJECT_PREVIEW.md](./PROJECT_PREVIEW.md)** - Comprehensive project overview
-- **[LINERA_FEATURES.md](./LINERA_FEATURES.md)** - Complete Linera features guide ⭐
-- **[LINERA_MIGRATION.md](./LINERA_MIGRATION.md)** - Linera migration guide
-- **[MIGRATION_STEPS.md](./MIGRATION_STEPS.md)** - Step-by-step migration
 - **[SECURITY.md](./SECURITY.md)** - Security practices
 
 ---
@@ -340,7 +277,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 🔒 **Transparent** - All votes verifiable on-chain  
 ⚡ **Fast** - Optimized for performance  
 🎨 **Beautiful** - Modern, responsive UI  
-🚀 **Scalable** - Ready for Linera migration  
 📱 **Mobile-First** - Works on all devices  
 
 ---
@@ -358,6 +294,5 @@ For questions or issues, please open an issue on GitHub.
 ## 🙏 Acknowledgments
 
 - Ethereum Foundation
-- Linera Protocol
 - React Team
 - All contributors

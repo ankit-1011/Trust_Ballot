@@ -82,7 +82,7 @@ export const startElection = async () => {
       console.log("✅ Connected address:", ethereum.selectedAddress);
     }
     
-    // Use exact same pattern as Dashboard handleVote (which works)
+    // Get contract signer for transaction
     console.log("📝 Getting contract signer...");
     const contract = await getContractSigner();
     console.log("✅ Contract signer obtained");
