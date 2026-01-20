@@ -118,7 +118,7 @@ cd tballot
 pnpm dev
 ```
 
-Visit: `http://localhost:5173`
+Visit: `https://trust-ballot-zujo.vercel.app/`
 
 ---
 
@@ -207,32 +207,10 @@ Trust_Ballot/
 - **Network**: Sepolia Testnet
 - **Status**: ✅ Deployed
 
----
-
-## 📚 Documentation
-
-- **[PROJECT_PREVIEW.md](./PROJECT_PREVIEW.md)** - Comprehensive project overview
-- **[SECURITY.md](./SECURITY.md)** - Security practices
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
----
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
 
 ## 💡 Key Highlights
 
@@ -241,13 +219,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ⚡ **Fast** - Optimized for performance  
 🎨 **Beautiful** - Modern, responsive UI  
 📱 **Mobile-First** - Works on all devices  
-
----
-
-**Built with ❤️ for transparent, democratic voting**
-
-## 🙏 Acknowledgments
-
-- Ethereum Foundation
-- React Team
-- All contributors
